@@ -4,7 +4,7 @@
 - user registration 
 - check books in 
 - check books out 
-- use **Singleton pattern** to handle database (file or variable) 
+- use **Singleton pattern** to handle a database connection object (file or variable) 
 - choose a use case for **Factory method** or **Builder pattern** (e.g., use Factory method 
 to create different types of books or users; …) 
 - use **Structural patterns** to assign fines to overdue books 
