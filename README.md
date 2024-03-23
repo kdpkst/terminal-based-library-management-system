@@ -1,5 +1,4 @@
-# terminal-based-library-management-system
-Minimum Requirements:
+# Minimum Requirements
 - add books 
 - remove books 
 - user registration 
