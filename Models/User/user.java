@@ -1,5 +1,5 @@
 package Models.User;
 
-public interface user {
+public abstract class  user {
     
 }

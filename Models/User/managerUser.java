@@ -1,5 +1,5 @@
 package Models.User;
 
-public class managerUser implements user{
+public class managerUser extends user{
     
 }
