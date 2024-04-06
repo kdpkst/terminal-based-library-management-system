@@ -13,6 +13,10 @@ pattern** to switch between different search mechanism for books; use **Observer
 pattern** to notify uses when a book they want becomes available; …)
 
 # Database Design
-table 1: **User** attributes:   
-| username | password | userID |
-|:--------:|:--------:|:------:|
+table 1: **users**     
+| uid | username | password |
+|:---:|:--------:|:--------:|
+
+table 2: **books**
+| bid | bookname | booktype |
+|:---:|:--------:|:--------:|
