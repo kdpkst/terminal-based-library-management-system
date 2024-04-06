@@ -10,4 +10,9 @@ to create different types of books or users; …)
 - use **Structural patterns** to assign fines to overdue books 
 - use **Behavioral patterns** to handle some of application logic (e.g., use **Strategy 
 pattern** to switch between different search mechanism for books; use **Observer 
-pattern** to notify uses when a book they want becomes available; …) 
+pattern** to notify uses when a book they want becomes available; …)
+
+# Database Design
+table 1: **User** attributes:   
+| username | password | userID |
+|:--------:|:--------:|:------:|
