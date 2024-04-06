@@ -1,7 +1,6 @@
 package Models.User;
 
-public class normalUser implements user{
+public class normalUser extends user{
     
-
     
 }
