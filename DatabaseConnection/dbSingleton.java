@@ -1,8 +1,11 @@
 package DatabaseConnection;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class dbSingleton {
+    private static final List<String> None = null;
     private static dbSingleton instance;
 
     private dbSingleton(){
@@ -17,7 +20,7 @@ public class dbSingleton {
     }
     
     // Logic Completed (need modification: return a variable rather than print out)
-    public void insert(String tableName, String[] data) {
+    public Boolean insert(String tableName, String[] data) {
         try {
             FileWriter writer = new FileWriter("./Database/" + tableName + ".csv", true);
             PrintWriter out = new PrintWriter(writer);
@@ -30,14 +33,16 @@ public class dbSingleton {
             }
             out.println();
             out.close();
-            System.out.println("Record inserted successfully!");
+            // System.out.println("Record inserted successfully!");
+            return true;
         } catch (IOException e) {
-            System.err.println("Error occurred while inserting record: " + e.getMessage());
+            // System.err.println("Error occurred while inserting record: " + e.getMessage());
+            return false;
         }
     }
     
     // Logic Completed (need modification: return count and no print out)
-    public void delete(String tableName, String keyField, String keyValue){
+    public int delete(String tableName, String keyField, String keyValue){
         try {
             File inputFile = new File("./Database/" + tableName + ".csv");
             File tempFile = new File("Database/temp.csv");
@@ -80,19 +85,22 @@ public class dbSingleton {
             inputFile.delete();
             tempFile.renameTo(inputFile);
             
-            if (count > 0){
-                System.out.println(count + " record(s) deleted successfully!");
-            }else{
-                System.out.println("No matching record to delete!");
-            }
+            // if (count > 0){
+            //     System.out.println(count + " record(s) deleted successfully!");
+            // }else{
+            //     System.out.println("No matching record to delete!");
+            // }
+
+            return count;
             
         } catch (IOException e) {
-            System.err.println("Error occurred while deleting record: " + e.getMessage());
+            // System.err.println("Error occurred while deleting record: " + e.getMessage());
+            return -1;
         }
     }
 
     // Logic Completed (need modification: return count rather and no print out)
-    public void update(String tableName, String keyField, String keyValue, String[] newData) {
+    public int update(String tableName, String keyField, String keyValue, String[] newData) {
         try {
             File inputFile = new File("./Database/" + tableName + ".csv");
             File tempFile = new File("Database/temp.csv");
@@ -139,21 +147,24 @@ public class dbSingleton {
     
             inputFile.delete();
             tempFile.renameTo(inputFile);
-    
-            if (count > 0) {
-                System.out.println(count + " record(s) updated successfully!");
-            } else {
-                System.out.println("No matching record to update!");
-            }
-    
+     
+            // if (count > 0) {
+            //     System.out.println(count + " record(s) updated successfully!");
+            // } else {
+            //     System.out.println("No matching record to update!");
+            // }
+
+            return count;
+
         } catch (IOException e) {
-            System.err.println("Error occurred while updating record: " + e.getMessage());
+            // System.err.println("Error occurred while updating record: " + e.getMessage());
+            return -1;
         }
     }
     
 
     // Logic Completed (need modification: return a variable rather than print out)
-    public void search(String tableName, String keyField, String keyValue) {
+    public List<String> search(String tableName, String keyField, String keyValue) {
         try {
             BufferedReader reader = new BufferedReader(new FileReader("./Database/"+ tableName + ".csv"));
     
@@ -167,33 +178,41 @@ public class dbSingleton {
                     break;
                 }
             }
-
+            
+            List<String> result = new ArrayList<>();
             while ((line = reader.readLine()) != null) {
                 fields = line.split(",");
                 for (int j = 0; j < fields.length; j++){
                     if (fields[j].contains(keyValue) && attributeIndex == j){
-                        System.out.println(line);
+                        result.add(line);
                     }
                 }
             }
             reader.close();
+            return result;
         } catch (IOException e) {
-            System.err.println("Error occurred while searching record: " + e.getMessage());
+            List<String> error = new ArrayList<>();
+            error.add("Error occurred while searching record: " + e.getMessage());
+            return error;
         }
     }
     
     // Logic Completed (need modification: return a variable rather than print out)
-    public void listAll(String tableName){
+    public List<String> listAll(String tableName){
         try {
             BufferedReader reader = new BufferedReader(new FileReader("./Database/" + tableName + ".csv"));
-
+            
+            List<String> result = new ArrayList<>();
             String line;
             while ((line = reader.readLine()) != null) {
-                System.out.println(line);
+                result.add(line);
             }
             reader.close();
+            return result;
         } catch (IOException e) {
-            System.err.println("Error occurred while viewing records: " + e.getMessage());
+            List<String> error = new ArrayList<>();
+            error.add("Error occurred while viewing records: " + e.getMessage());
+            return error;
         }
     }
 }
