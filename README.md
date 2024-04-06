@@ -14,9 +14,10 @@ pattern** to notify uses when a book they want becomes available; …)
 
 # Database Design
 table 1: **users**     
-| uid | username | password |
-|:---:|:--------:|:--------:|
+| uid | username | password | uertype|
+|:---:|:--------:|:--------:|:------:|
 
 table 2: **books**
-| bid | bookname | booktype |
-|:---:|:--------:|:--------:|
+| bid | bookname | booktype | state |
+|:---:|:--------:|:--------:|:-----:|
+
