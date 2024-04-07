@@ -29,7 +29,7 @@ table 2: **books**
 table 3: **book_copies** 
 | cid | bid | status |
 |:---:|:---:|:------:|
-> **status**: avaliable or not
+> **status**: available or not
 
 table 4: **transactions**
 | tid | uid | cid | transaction_type | transaction_date | due_date |
@@ -40,4 +40,4 @@ table 4: **transactions**
 table 5: **fines** 
 | fid | cid | amount | fine_date |
 |:---:|:---:|:------:|:---------:|
-> insert a record of fine when a user return a overdue book
+> insert a record of fine when a user return an overdue book
