@@ -32,10 +32,10 @@ table 3: **book_copies**
 > **status**: available or not
 
 table 4: **transactions**
-| tid | uid | cid | transaction_type | transaction_date | due_date |
-|:---:|:---:|:---:|:----------------:|:----------------:|:--------:|
+| tid | uid | cid | transaction_type | transaction_date | status |
+|:---:|:---:|:---:|:----------------:|:----------------:|:------:|
 > **transaction_type**: borrow or return a book  
-> **due_date**: assign corresponding value if transaction_type is "borrow"; leave empty if transaction_type is "return"
+> **status**: completed or incompleted
 
 table 5: **fines** 
 | fid | cid | amount | fine_date |
