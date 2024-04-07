@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class dbSingleton {
-    private static final List<String> None = null;
+
     private static dbSingleton instance;
 
     private dbSingleton(){

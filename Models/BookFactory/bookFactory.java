@@ -1,5 +1,5 @@
 package Models.BookFactory;
 
-public interface bookFactory {
+public abstract class bookFactory {
     
 }

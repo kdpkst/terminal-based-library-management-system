@@ -2,6 +2,6 @@ package Models.UserFactory;
 
 import Models.User.user;
 
-public interface userFactory {
-    user createUser();
+public abstract class userFactory {
+    public abstract user createUser();
 }
