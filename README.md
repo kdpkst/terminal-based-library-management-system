@@ -1,4 +1,7 @@
-# Minimum Requirements
+# Library Management System
+A console-based library management system with a particular focus on implementation of different design patterns.
+
+## Minimum Requirements
 - add books 
 - remove books 
 - user registration 
@@ -12,7 +15,7 @@ to create different types of books or users; …)
 pattern** to switch between different search mechanism for books; use **Observer 
 pattern** to notify uses when a book they want becomes available; …)
 
-# Database Design
+## Database Design
 table 1: **users**     
 | uid | username | password | uertype|
 |:---:|:--------:|:--------:|:------:|
@@ -20,4 +23,5 @@ table 1: **users**
 table 2: **books**
 | bid | bookname | booktype | state |
 |:---:|:--------:|:--------:|:-----:|
+
 
