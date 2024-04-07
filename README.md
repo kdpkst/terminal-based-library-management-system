@@ -17,11 +17,17 @@ pattern** to notify uses when a book they want becomes available; …)
 
 ## Database Design
 table 1: **users**     
-| uid | username | password | uertype|
+| uid | username | password | type |
 |:---:|:--------:|:--------:|:------:|
 
 table 2: **books**
-| bid | bookname | booktype | state |
-|:---:|:--------:|:--------:|:-----:|
+| bid | title | author | genre | quantity_available |
+|:---:|:-----:|:------:|:-----:|:------------------:|
 
+table 3: **transactions**
+| tid | uid | bid | transaction_type | transaction_date |
+|:---:|:---:|:---:|:----------------:|:----------------:|
 
+table 4: **fines** 
+| fid | tid | amount | fine_date |
+|:---:|:---:|:------:|:---------:|
