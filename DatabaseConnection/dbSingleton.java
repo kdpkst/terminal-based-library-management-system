@@ -19,7 +19,7 @@ public class dbSingleton {
         return instance;
     }
     
-    // Logic Completed (need modification: return a variable rather than print out)
+    // Logic Completed (need modification: return a hashtable-like variable)
     public Boolean insert(String tableName, String[] data) {
         try {
             FileWriter writer = new FileWriter("./Database/" + tableName + ".csv", true);
@@ -41,7 +41,7 @@ public class dbSingleton {
         }
     }
     
-    // Logic Completed (need modification: return count and no print out)
+    // Logic Completed (need modification: return a hashtable-like variable)
     public int delete(String tableName, String keyField, String keyValue){
         try {
             File inputFile = new File("./Database/" + tableName + ".csv");
@@ -99,7 +99,7 @@ public class dbSingleton {
         }
     }
 
-    // Logic Completed (need modification: return count rather and no print out)
+    // Logic Completed (need modification: return a hashtable-like variable)
     public int update(String tableName, String keyField, String keyValue, String[] newData) {
         try {
             File inputFile = new File("./Database/" + tableName + ".csv");
@@ -163,7 +163,7 @@ public class dbSingleton {
     }
     
 
-    // Logic Completed (need modification: return a variable rather than print out)
+    // Logic Completed (need modification: return a hashtable-like variable)
     public List<String> search(String tableName, String keyField, String keyValue) {
         try {
             BufferedReader reader = new BufferedReader(new FileReader("./Database/"+ tableName + ".csv"));
@@ -197,7 +197,7 @@ public class dbSingleton {
         }
     }
     
-    // Logic Completed (need modification: return a variable rather than print out)
+    // Logic Completed (need modification: return a hashtable-like variable)
     public List<String> listAll(String tableName){
         try {
             BufferedReader reader = new BufferedReader(new FileReader("./Database/" + tableName + ".csv"));

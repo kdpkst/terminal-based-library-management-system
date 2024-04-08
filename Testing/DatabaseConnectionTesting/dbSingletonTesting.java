@@ -1,9 +1,10 @@
-package Testing;
+package Testing.DatabaseConnectionTesting;
 
 import DatabaseConnection.dbSingleton;
 
 public class dbSingletonTesting {
     public static void main(String[] args) {
+
         dbSingleton dbConnectionObject = dbSingleton.getInstance();
 
         // dbConnectionObject.listAll("users");
