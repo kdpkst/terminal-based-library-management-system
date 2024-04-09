@@ -4,10 +4,10 @@ import java.util.Scanner;
 
 public class consoleBasedUI {
 
-    public void initialInterface(){
-        System.out.println("\n---Initial Interface---");
+    public void home(){
+        System.out.println("\n---Home---");
         System.out.println("1. Login");
-        System.out.println("2. Register an account");
+        System.out.println("2. Register");
         System.out.println("3. Exit");
 
         System.out.print("Choose an option: ");
@@ -30,16 +30,18 @@ public class consoleBasedUI {
                 break;
         }
 
-        initialInterface();
+        home();
     }
 
     public void normalUserInterface(){
         System.out.println("---!Welcome to the Library!---");
-        System.out.println("1. View book list");
-        System.out.println("2. Search book");
-        System.out.println("3. Check book in");
-        System.out.println("4. Check book out");
-        System.out.println("5. Exit");
+        System.out.println("List All Books");
+        System.out.println("List All Copies for A Book");
+        System.out.println("Search Book");
+        System.out.println("Borrow Book");
+        System.out.println("Return Book");
+        System.out.println("Back to Home");
+        System.out.println("Exit");
 
         System.out.print("Choose an option: ");
         int option = getIntInput();
@@ -57,6 +59,12 @@ public class consoleBasedUI {
                 
                 break;
             case 5:
+                
+                break;
+            case 6:
+                
+                break;               
+            case 7:
                 System.exit(0);
                 break;
             default:
@@ -69,9 +77,15 @@ public class consoleBasedUI {
 
     public void managerInterface(){
         System.out.println("---Manager System---");
-        System.out.println("1. Add book");
-        System.out.println("2. Remove book");
-        System.out.println("3. Exit");
+        System.out.println("List All Books");
+        System.out.println("List All Copies for A Book");
+        System.out.println("Search Book");
+        System.out.println("Add Book");
+        System.out.println("Remove Book");
+        System.out.println("List All Users");
+        System.out.println("Search User");
+        System.out.println("Back to Home");
+        System.out.println("Exit");
 
         System.out.print("Choose an option: ");
         int option = getIntInput();
@@ -83,10 +97,28 @@ public class consoleBasedUI {
                 
                 break;
             case 3:
+                
+                break;
+            case 4:
+                
+                break;
+            case 5:
+                
+                break;
+            case 6:
+                
+                break;  
+            case 7:
+                
+                break;  
+            case 8:
+                
+                break;                                 
+            case 9:
                 System.exit(0);
-                break;          
+                break;
             default:
-                System.out.println("Invalid option, re-enter number between 1 to 3: ");
+                System.out.println("Invalid option, re-enter number between 1 to 5: ");
                 break;
         }
 
@@ -115,8 +147,6 @@ public class consoleBasedUI {
     }
 
     private void login(){
-        System.out.println("\n---Login---");
-
         System.out.print("Username: ");
         String username = getStringInput();
         System.out.print("Password: ");

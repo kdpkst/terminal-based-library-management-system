@@ -8,7 +8,7 @@ public interface user {
 
     public boolean login(String username, String password);
     public List<book> viewAllBooks();
-    public List<book> viewAllBookCopies(int bid);
+    public List<book> viewAllCopiesforOneBook(int bid);
     // use Strategy pattern to switch between different search mechanism
     // may consider searching by title, author, genre
     public List<book> searchBooks();

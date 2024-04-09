@@ -36,7 +36,7 @@ public class managerUser implements user{
     }
 
     @Override
-    public List<book> viewAllBookCopies(int bid) {
+    public List<book> viewAllCopiesforOneBook(int bid) {
         return new ArrayList<>();
     }
 
