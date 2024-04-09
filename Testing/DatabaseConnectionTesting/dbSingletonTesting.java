@@ -5,19 +5,19 @@ import DatabaseConnection.dbSingleton;
 public class dbSingletonTesting {
     public static void main(String[] args) {
 
-        dbSingleton dbConnectionObject = dbSingleton.getInstance();
+        dbSingleton dbConnector = dbSingleton.getInstance();
 
-        // dbConnectionObject.listAll("users");
+        // dbConnector.listAll("users");
 
-        // dbConnectionObject.search("users", "username", "y");
+        // dbConnector.search("users", "username", "y");
 
         // String[] data = {"2", "siling", "ilovesex"};
-        // dbConnectionObject.insert("users", data);
+        // dbConnector.insert("users", data);
 
-        // dbConnectionObject.delete("users", "uid", "1");
+        // dbConnector.delete("users", "uid", "1");
 
         // String[] data1 = {"8", "master", "wank"};
-        // dbConnectionObject.update("users", "password", "master", data1);
+        // dbConnector.update("users", "password", "master", data1);
 
     }
 }

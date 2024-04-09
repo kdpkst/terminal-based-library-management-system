@@ -164,7 +164,7 @@ public class dbSingleton {
     
 
     // Logic Completed (need modification: return a hashtable-like variable)
-    public List<String> search(String tableName, String keyField, String keyValue) {
+    public List<String> fuzzySearch(String tableName, String keyField, String keyValue) {
         try {
             BufferedReader reader = new BufferedReader(new FileReader("./Database/"+ tableName + ".csv"));
     
@@ -184,6 +184,40 @@ public class dbSingleton {
                 fields = line.split(",");
                 for (int j = 0; j < fields.length; j++){
                     if (fields[j].contains(keyValue) && attributeIndex == j){
+                        result.add(line);
+                    }
+                }
+            }
+            reader.close();
+            return result;
+        } catch (IOException e) {
+            List<String> error = new ArrayList<>();
+            error.add("Error occurred while searching record: " + e.getMessage());
+            return error;
+        }
+    }
+
+    // Logic Completed (need modification: return a hashtable-like variable)
+    public List<String> preciseSearch(String tableName, String keyField, String keyValue) {
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader("./Database/"+ tableName + ".csv"));
+    
+            String line = reader.readLine();
+            String[] fields;
+            int attributeIndex = -1;
+            fields = line.split(",");
+            for (int i = 0; i < fields.length; i++){
+                if (keyField.equals(fields[i])){
+                    attributeIndex = i;
+                    break;
+                }
+            }
+            
+            List<String> result = new ArrayList<>();
+            while ((line = reader.readLine()) != null) {
+                fields = line.split(",");
+                for (int j = 0; j < fields.length; j++){
+                    if (fields[j].equals(keyValue) && attributeIndex == j){
                         result.add(line);
                     }
                 }

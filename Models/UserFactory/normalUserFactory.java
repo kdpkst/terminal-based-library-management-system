@@ -10,4 +10,9 @@ public class normalUserFactory extends userFactory{
         return new normalUser(uid, username, password, bidWant);
     }
 
+    @Override
+    public user createUser() {
+        return new normalUser();
+    }
+
 }

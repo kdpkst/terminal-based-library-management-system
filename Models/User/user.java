@@ -6,7 +6,7 @@ import Models.Book.book;
 
 public interface user {
 
-    public boolean login(String username, String password, int userType);
+    public boolean login(String username, String password);
     public List<book> viewAllBooks();
     public List<book> viewAllBookCopies(int bid);
     // use Strategy pattern to switch between different search mechanism

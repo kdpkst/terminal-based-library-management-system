@@ -9,5 +9,10 @@ public class managerUserFactory extends userFactory{
     public user createUser(int uid, String username, String password, String bidWant) {
         return new managerUser(uid, username, password, bidWant);
     }
+
+    @Override
+    public user createUser() {
+        return new managerUser();
+    }
     
 }
