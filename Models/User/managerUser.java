@@ -2,7 +2,9 @@ package Models.User;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import DatabaseConnection.dbSingleton;
 import Models.Book.book;
 
 public class managerUser implements user{
@@ -26,8 +28,28 @@ public class managerUser implements user{
     }
 
     @Override
-    public boolean login(String username, String password) {
-        return true;
+    public int login(String username, String password) {
+        dbSingleton dbConnctor = dbSingleton.getInstance();
+        List<Map<String, String>> userRecords = dbConnctor.preciseSearch("users", "username", username);
+        if (userRecords.size() == 1){
+            int id = Integer.parseInt(userRecords.get(0).get("uid")); 
+            String passwd = userRecords.get(0).get("password");
+            int uType = Integer.parseInt(userRecords.get(0).get("type"));
+            String booksWant = userRecords.get(0).get("bid_want");
+            if (passwd.equals(password) && uType == 1){
+                this.setUid(id);
+                this.setUsername(username);
+                this.setPassword(password);
+                this.setBidWant(booksWant);
+                return 1;
+            }
+            else{
+                return 0;
+            }
+        }
+        else{
+            return -1;
+        }
     }
 
     @Override

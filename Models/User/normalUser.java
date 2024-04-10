@@ -1,7 +1,9 @@
 package Models.User;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import DatabaseConnection.dbSingleton;
 import Models.Book.book;
@@ -26,37 +28,36 @@ public class normalUser implements user{
         this.type = 0;
     }
 
-    // an example, waiting for further modification
+
     @Override
-    public boolean login(String username, String password) {
-        // dbSingleton dbConnctor = dbSingleton.getInstance();
-        // List<String> userRecord = dbConnctor.preciseSearch("users", "username", username);
-        // if (userRecord.size() == 1){
-        //     int id = Integer.parseInt(userRecord.get(0).split(",")[0]);
-        //     String passwd = userRecord.get(0).split(",")[2];
-        //     int uType = Integer.parseInt(userRecord.get(0).split(",")[3]);
-        //     String booksWant = userRecord.get(0).split(",")[4];
-        //     if (passwd.equals(password) && uType == 0){
-        //         this.setUid(id);
-        //         this.setUsername(username);
-        //         this.setPassword(password);
-        //         this.setBidWant(booksWant);
-        //         return true;
-        //     }
-        //     else{
-        //         // input password incorrect or it is manager user
-        //         return false;
-        //     }
-        // }
-        // else{
-        //     // username does not exist
-        //     return false;
-        // }
-        return true;
+    public int login(String username, String password) {
+        dbSingleton dbConnctor = dbSingleton.getInstance();
+        List<Map<String, String>> userRecords = dbConnctor.preciseSearch("users", "username", username);
+        if (userRecords.size() == 1){
+            int id = Integer.parseInt(userRecords.get(0).get("uid")); 
+            String passwd = userRecords.get(0).get("password");
+            int uType = Integer.parseInt(userRecords.get(0).get("type"));
+            String booksWant = userRecords.get(0).get("bid_want");
+            if (passwd.equals(password) && uType == 0){
+                this.setUid(id);
+                this.setUsername(username);
+                this.setPassword(password);
+                this.setBidWant(booksWant);
+                return 1;
+            }
+            else{
+                return 0;
+            }
+        }
+        else{
+            return -1;
+        }
     }
 
     @Override
     public List<book> viewAllBooks(){
+        dbSingleton dbConnctor = dbSingleton.getInstance();
+
         return new ArrayList<>();
     }
 
@@ -70,8 +71,43 @@ public class normalUser implements user{
         return new ArrayList<>();
     }
 
-    public boolean register(String username, String password){
-        return true;
+    /**
+     * @param username: input username
+     * @param password: input password
+     * @return 1:successfully insert; 0:Error occurred while inserting; -1:duplicate username
+     */
+    public int register(String username, String password){
+        dbSingleton dbConnctor = dbSingleton.getInstance();
+        List<Map<String, String>> userRecords = dbConnctor.preciseSearch("users", "username", username);
+        // the username must be unique
+        if (userRecords.size() == 0){
+            // Map<String, Integer> idMap = dbSingleton.getidMap();
+            Map<String, String> recordInserted = new HashMap<String, String>();
+            // recordInserted.put("uid", String.valueOf(idMap.get("users") + 1));
+            recordInserted.put("username", username);
+            recordInserted.put("password", password);
+            recordInserted.put("type", String.valueOf(this.getType()));
+            recordInserted.put("bid_want", "none");
+    
+            List<Map<String, String>> result = new ArrayList<>();
+            result.add(recordInserted);
+    
+            // this.setUid(idMap.get("users") + 1);
+            this.setUsername(username);
+            this.setPassword(password);
+            this.setBidWant("none");
+    
+            boolean inserted = dbConnctor.insert("users", result);
+            if (inserted){
+                return 1;
+            }        
+            else{
+                return 0;
+            }
+        }
+        else{
+            return -1;
+        }
     }
 
     public boolean borrowBook(int cid){

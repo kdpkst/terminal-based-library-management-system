@@ -14,8 +14,8 @@ public class dbSingletonTesting {
         // List<Map<String, String>> result = dbConnector.listAll("users");
         // System.out.println(result);
 
-        List<Map<String, String>> result1 = dbConnector.fuzzySearch("users", "username", "y");
-        System.out.println(result1);
+        // List<Map<String, String>> result1 = dbConnector.fuzzySearch("users", "username", "y");
+        // System.out.println(result1);
 
         // List<Map<String, String>> result2 = dbConnector.preciseSearch("users", "username", "strong");
         // System.out.println(result2);
