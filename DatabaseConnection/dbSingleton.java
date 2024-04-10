@@ -23,18 +23,34 @@ public class dbSingleton {
     }
     
     // Logic Completed (need modification: return a hashtable-like variable)
-    public Boolean insert(String tableName, String[] data) {
+    public Boolean insert(String tableName,  List<Map<String, String>> data) {
         try {
             FileWriter writer = new FileWriter("./Database/" + tableName + ".csv", true);
             PrintWriter out = new PrintWriter(writer);
-            
-            for (int i = 0; i < data.length; i++) {
-                out.print(data[i]);
-                if (i < data.length - 1) {
-                    out.print(","); 
+
+            //get the fields
+            BufferedReader reader = new BufferedReader(new FileReader("./Database/" + tableName + ".csv"));
+            String line = reader.readLine();
+            String[] fields = line.split(",");
+
+
+            for (Map<String, String> map : data) {
+                for (Map.Entry<String, String> entry : map.entrySet()) {
+                    String key = entry.getKey();
+                    String value = entry.getValue();
+                    for (int i = 0; i < fields.length; i++) {
+                        if(key.equals(fields[i])){
+                            out.print(value);
+                            if(i<fields.length-1){
+                                out.print(",");
+                            }
+                        }
+                    }
                 }
+
+                out.println();
             }
-            out.println();
+
             out.close();
             // System.out.println("Record inserted successfully!");
             return true;
