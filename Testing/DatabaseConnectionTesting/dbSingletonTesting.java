@@ -1,5 +1,9 @@
 package Testing.DatabaseConnectionTesting;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import DatabaseConnection.dbSingleton;
 
 public class dbSingletonTesting {
@@ -7,9 +11,14 @@ public class dbSingletonTesting {
 
         dbSingleton dbConnector = dbSingleton.getInstance();
 
-        // dbConnector.listAll("users");
+        // List<Map<String, String>> result = dbConnector.listAll("users");
+        // System.out.println(result);
 
-        // dbConnector.search("users", "username", "y");
+        List<Map<String, String>> result1 = dbConnector.fuzzySearch("users", "username", "y");
+        System.out.println(result1);
+
+        // List<Map<String, String>> result2 = dbConnector.preciseSearch("users", "username", "strong");
+        // System.out.println(result2);
 
         // String[] data = {"2", "siling", "ilovesex"};
         // dbConnector.insert("users", data);

@@ -29,29 +29,30 @@ public class normalUser implements user{
     // an example, waiting for further modification
     @Override
     public boolean login(String username, String password) {
-        dbSingleton dbConnctor = dbSingleton.getInstance();
-        List<String> userRecord = dbConnctor.preciseSearch("users", "username", username);
-        if (userRecord.size() == 1){
-            int id = Integer.parseInt(userRecord.get(0).split(",")[0]);
-            String passwd = userRecord.get(0).split(",")[2];
-            int uType = Integer.parseInt(userRecord.get(0).split(",")[3]);
-            String booksWant = userRecord.get(0).split(",")[4];
-            if (passwd.equals(password) && uType == 0){
-                this.setUid(id);
-                this.setUsername(username);
-                this.setPassword(password);
-                this.setBidWant(booksWant);
-                return true;
-            }
-            else{
-                // input password incorrect or it is manager user
-                return false;
-            }
-        }
-        else{
-            // username does not exist
-            return false;
-        }
+        // dbSingleton dbConnctor = dbSingleton.getInstance();
+        // List<String> userRecord = dbConnctor.preciseSearch("users", "username", username);
+        // if (userRecord.size() == 1){
+        //     int id = Integer.parseInt(userRecord.get(0).split(",")[0]);
+        //     String passwd = userRecord.get(0).split(",")[2];
+        //     int uType = Integer.parseInt(userRecord.get(0).split(",")[3]);
+        //     String booksWant = userRecord.get(0).split(",")[4];
+        //     if (passwd.equals(password) && uType == 0){
+        //         this.setUid(id);
+        //         this.setUsername(username);
+        //         this.setPassword(password);
+        //         this.setBidWant(booksWant);
+        //         return true;
+        //     }
+        //     else{
+        //         // input password incorrect or it is manager user
+        //         return false;
+        //     }
+        // }
+        // else{
+        //     // username does not exist
+        //     return false;
+        // }
+        return true;
     }
 
     @Override

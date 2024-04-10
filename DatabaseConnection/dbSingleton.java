@@ -4,6 +4,9 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class dbSingleton {
 
     private static dbSingleton instance;
@@ -164,88 +167,108 @@ public class dbSingleton {
     
 
     // Logic Completed (need modification: return a hashtable-like variable)
-    public List<String> fuzzySearch(String tableName, String keyField, String keyValue) {
+    public List<Map<String, String>> fuzzySearch(String tableName, String keyField, String keyValue) {
         try {
             BufferedReader reader = new BufferedReader(new FileReader("./Database/"+ tableName + ".csv"));
     
             String line = reader.readLine();
-            String[] fields;
             int attributeIndex = -1;
-            fields = line.split(",");
+            String[] fields = line.split(",");
             for (int i = 0; i < fields.length; i++){
                 if (keyField.equals(fields[i])){
                     attributeIndex = i;
                     break;
                 }
             }
-            
-            List<String> result = new ArrayList<>();
+
+            List<Map<String, String>> result = new ArrayList<>();
             while ((line = reader.readLine()) != null) {
-                fields = line.split(",");
+                Map<String, String> recordHash = new HashMap<>();
+                String[] recordArr = line.split(",");
                 for (int j = 0; j < fields.length; j++){
-                    if (fields[j].contains(keyValue) && attributeIndex == j){
-                        result.add(line);
+                    if (recordArr[j].contains(keyValue) && attributeIndex == j){
+                        for (int k = 0; k < recordArr.length; k++){
+                            recordHash.put(fields[k], recordArr[k]);
+                        }
+                        result.add(recordHash);
                     }
                 }
             }
             reader.close();
             return result;
         } catch (IOException e) {
-            List<String> error = new ArrayList<>();
-            error.add("Error occurred while searching record: " + e.getMessage());
+            List<Map<String, String>> error = new ArrayList<>();
+            Map<String, String> errorMessage= new HashMap<>();
+            errorMessage.put("Error Message", e.getMessage());
+            error.add(errorMessage);
             return error;
         }
     }
 
     // Logic Completed (need modification: return a hashtable-like variable)
-    public List<String> preciseSearch(String tableName, String keyField, String keyValue) {
+    public List<Map<String, String>> preciseSearch(String tableName, String keyField, String keyValue) {
         try {
             BufferedReader reader = new BufferedReader(new FileReader("./Database/"+ tableName + ".csv"));
     
             String line = reader.readLine();
-            String[] fields;
             int attributeIndex = -1;
-            fields = line.split(",");
+            String[] fields = line.split(",");
             for (int i = 0; i < fields.length; i++){
                 if (keyField.equals(fields[i])){
                     attributeIndex = i;
                     break;
                 }
             }
-            
-            List<String> result = new ArrayList<>();
+
+            List<Map<String, String>> result = new ArrayList<>();
             while ((line = reader.readLine()) != null) {
-                fields = line.split(",");
+                Map<String, String> recordHash = new HashMap<>();
+                String[] recordArr = line.split(",");
                 for (int j = 0; j < fields.length; j++){
-                    if (fields[j].equals(keyValue) && attributeIndex == j){
-                        result.add(line);
+                    if (recordArr[j].equals(keyValue) && attributeIndex == j){
+                        for (int k = 0; k < recordArr.length; k++){
+                            recordHash.put(fields[k], recordArr[k]);
+                        }
+                        result.add(recordHash);
                     }
                 }
             }
             reader.close();
             return result;
         } catch (IOException e) {
-            List<String> error = new ArrayList<>();
-            error.add("Error occurred while searching record: " + e.getMessage());
+            List<Map<String, String>> error = new ArrayList<>();
+            Map<String, String> errorMessage= new HashMap<>();
+            errorMessage.put("Error Message", e.getMessage());
+            error.add(errorMessage);
             return error;
         }
     }
     
     // Logic Completed (need modification: return a hashtable-like variable)
-    public List<String> listAll(String tableName){
+    public List<Map<String, String>> listAll(String tableName){
         try {
             BufferedReader reader = new BufferedReader(new FileReader("./Database/" + tableName + ".csv"));
             
-            List<String> result = new ArrayList<>();
-            String line;
+            String line = reader.readLine();
+            String[] fields = line.split(",");
+            List<Map<String, String>> result = new ArrayList<>();
+            
             while ((line = reader.readLine()) != null) {
-                result.add(line);
+                Map<String, String> recordHash = new HashMap<>();
+                String[] recordArr = line.split(",");
+                for (int i = 0; i < recordArr.length; i++){
+                    recordHash.put(fields[i], recordArr[i]);
+                }
+                result.add(recordHash);
             }
             reader.close();
             return result;
+
         } catch (IOException e) {
-            List<String> error = new ArrayList<>();
-            error.add("Error occurred while viewing records: " + e.getMessage());
+            List<Map<String, String>> error = new ArrayList<>();
+            Map<String, String> errorMessage= new HashMap<>();
+            errorMessage.put("Error Message", e.getMessage());
+            error.add(errorMessage);
             return error;
         }
     }
