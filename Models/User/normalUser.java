@@ -28,7 +28,6 @@ public class normalUser implements user{
         this.type = 0;
     }
 
-
     @Override
     public int login(String username, String password) {
         dbSingleton dbConnctor = dbSingleton.getInstance();
@@ -72,9 +71,12 @@ public class normalUser implements user{
     }
 
     /**
-     * @param username: input username
-     * @param password: input password
-     * @return 1:successfully insert; 0:Error occurred while inserting; -1:duplicate username
+     * @param username Username entered when the user registers 
+     * @param password Password entered when the user registers
+     * @return An integer indicating the registration status:
+     *         1 if successfully inserting
+     *         0 if error occurred while inserting 
+     *         -1 if username is duplicate
      */
     public int register(String username, String password){
         dbSingleton dbConnctor = dbSingleton.getInstance();

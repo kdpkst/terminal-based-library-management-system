@@ -7,9 +7,12 @@ import Models.Book.book;
 public interface user {
 
     /**
-     * @param username: input username
-     * @param password: input password
-     * @return 1: successfully login; 0:input password incorrect or wrong user type; -1:username does not exist
+     * @param username Username entered when the user login
+     * @param password Password entered when the user login
+     * @return An integer indicating the login status:
+     *         1 if the login is successful
+     *         0 if the username and password do not match or the user type is not 0
+     *         -1 if there are multiple user records with the same username
      */
     public int login(String username, String password);
     public List<book> viewAllBooks();
