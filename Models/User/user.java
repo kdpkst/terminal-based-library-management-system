@@ -3,6 +3,7 @@ package Models.User;
 import java.util.List;
 
 import Models.Book.book;
+import Models.BookCopy.bookCopy;
 
 public interface user {
 
@@ -16,7 +17,7 @@ public interface user {
      */
     public int login(String username, String password);
     public List<book> viewAllBooks();
-    public List<book> viewAllCopiesforOneBook(int bid);
+    public List<bookCopy> viewAllCopiesforOneBook(int bid);
     // use Strategy pattern to switch between different search mechanism
     // may consider searching by title, author, genre
     public List<book> searchBooks();

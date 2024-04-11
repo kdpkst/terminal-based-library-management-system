@@ -7,6 +7,7 @@ import java.util.Map;
 
 import DatabaseConnection.dbSingleton;
 import Models.Book.book;
+import Models.BookCopy.bookCopy;
 
 public class normalUser implements user{
     
@@ -55,14 +56,36 @@ public class normalUser implements user{
 
     @Override
     public List<book> viewAllBooks(){
-        dbSingleton dbConnctor = dbSingleton.getInstance();
+        // dbSingleton dbConnctor = dbSingleton.getInstance();
+        // List<Map<String, String>> books = dbConnctor.listAll("books");
+        // List<book> booksList = new ArrayList<>();
+        // for (int i = 0; i < books.size(); i++){
+        //     Map<String, String> bookRecord = books.get(i);
+        //     int bid = Integer.parseInt(bookRecord.get("bid"));
+        //     String title = bookRecord.get("title");
+        //     String author = bookRecord.get("author");
+        //     String genre = bookRecord.get("genre");
+        //     int quantity_available = Integer.parseInt(bookRecord.get("quantity_available"));
+            
+        // }
 
+        // return booksList;
         return new ArrayList<>();
     }
 
     @Override
-    public List<book> viewAllCopiesforOneBook(int bid) {
-        return new ArrayList<>();
+    public List<bookCopy> viewAllCopiesforOneBook(int bid) {
+        dbSingleton dbConnctor = dbSingleton.getInstance();
+        List<Map<String, String>> bookCopies = dbConnctor.preciseSearch("book_copies", "bid", String.valueOf(bid));
+        List<bookCopy> bookCopiesList = new ArrayList<>();
+        for (int i = 0; i < bookCopies.size(); i++){
+            Map<String, String> bookCopiesRecord = bookCopies.get(i);
+            int cid = Integer.parseInt(bookCopiesRecord.get("cid"));
+            int status = Integer.parseInt(bookCopiesRecord.get("status"));
+            bookCopy bookCopyObject = new bookCopy(cid, bid, status);
+            bookCopiesList.add(bookCopyObject);
+        }
+        return bookCopiesList;
     }
 
     @Override

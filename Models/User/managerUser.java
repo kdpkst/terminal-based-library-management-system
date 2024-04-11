@@ -6,6 +6,7 @@ import java.util.Map;
 
 import DatabaseConnection.dbSingleton;
 import Models.Book.book;
+import Models.BookCopy.bookCopy;
 
 public class managerUser implements user{
 
@@ -58,7 +59,7 @@ public class managerUser implements user{
     }
 
     @Override
-    public List<book> viewAllCopiesforOneBook(int bid) {
+    public List<bookCopy> viewAllCopiesforOneBook(int bid) {
         return new ArrayList<>();
     }
 
