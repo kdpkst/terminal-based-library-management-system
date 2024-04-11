@@ -35,9 +35,8 @@ table 3: **book_copies**
 > primary key: cid
 
 table 4: **transactions**
-| tid | uid | cid | transaction_type | transaction_date | status |
-|:---:|:---:|:---:|:----------------:|:----------------:|:------:|
-> **transaction_type**: borrow or return a book  
+| tid | uid | cid | transaction_date | status |
+|:---:|:---:|:---:|:----------------:|:------:|
 > **status**: completed or incompleted
 > primary key: tid
 

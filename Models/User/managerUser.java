@@ -1,6 +1,7 @@
 package Models.User;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -9,7 +10,8 @@ import DatabaseConnection.dbSingleton;
 import Models.Book.book;
 import Models.BookCopy.bookCopy;
 import Factory.BookFactory.*;
-
+import Factory.UserFactory.managerUserFactory;
+import Factory.UserFactory.normalUserFactory;
 
 public class managerUser implements user{
 
@@ -116,15 +118,64 @@ public class managerUser implements user{
     }
 
     public boolean addBook(String title, String author, String genre){
+        dbSingleton dbConnctor = dbSingleton.getInstance();
+        List<Map<String,String>> bookRecord= dbConnctor.preciseSearch("books", "title", title);
+        if(bookRecord.size()==0){
+            int bid=dbConnctor.getNextId("books");
+            Map<String, String> recordInserted = new HashMap<String, String>();
+            recordInserted.put("bid", String.valueOf(bid));
+            recordInserted.put("title", title);
+            recordInserted.put("author", author);
+            recordInserted.put("genre", genre);
+            List<Map<String, String>> bookresult = new ArrayList<>();
+            bookresult.add(recordInserted);
+        }
+
         return true;
     }
 
     public boolean removeBook(int cid){
+        dbSingleton dbConnctor = dbSingleton.getInstance();
+        List<Map<String, String>> bookCopies = dbConnctor.preciseSearch("book_copies", "cid", String.valueOf(cid));
+        String bid=bookCopies.get(0).get("bid");
+        int deletenumber=dbConnctor.delete("book_copies","cid",String.valueOf(cid));
+        if(deletenumber<=0){
+            return false;
+        }
+
+        List<Map<String,String>> copyRecords= dbConnctor.preciseSearch("book_copies", "bid", bid);
+        
         return true;
     }
 
     public List<user> viewAllUsers(){
-        return new ArrayList<>();
+        dbSingleton dbConnctor = dbSingleton.getInstance();
+        List<Map<String, String>> users = dbConnctor.listAll("users");
+        List<user> usersList = new ArrayList<>();
+        for (int i = 0; i < users.size(); i++) {
+            Map<String, String> userRecord = users.get(i);
+            int uid = Integer.parseInt(userRecord.get("uid"));
+            String username = userRecord.get("username");
+            String password = userRecord.get("password");
+            String bidWant=userRecord.get("bid_want");
+            String userType = userRecord.get("userType");
+            // Assuming userType is stored as an integer where 0 corresponds to normalUser and 1 corresponds to managerUser
+            if (Integer.parseInt(userType) == type) {
+                switch (type) {
+                    case 0:
+                        normalUserFactory normalUserFactory = new normalUserFactory();
+                        user normalUser = normalUserFactory.createUser(uid, username, password,bidWant);
+                        usersList.add(normalUser);
+                        break;
+                    case 1:
+                        managerUserFactory managerUserFactory = new managerUserFactory();
+                        user managerUser = managerUserFactory.createUser(uid, username, password,bidWant);
+                        usersList.add(managerUser);
+                        break;
+                }
+            }
+        }
+        return usersList;
     }
 
     // use Strategy pattern to switch between different search mechanism
