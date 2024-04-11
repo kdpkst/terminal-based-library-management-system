@@ -10,8 +10,10 @@ import java.util.Map;
 import DatabaseConnection.dbSingleton;
 import Models.Book.book;
 import Models.BookCopy.bookCopy;
+import Strategy.SearchByAuthor;
+import Strategy.SearchByGenre;
+import Strategy.SearchByTitle;
 import Factory.BookFactory.*;
-import Models.Transaction.transaction;
 
 public class normalUser implements user{
     
@@ -113,8 +115,24 @@ public class normalUser implements user{
     }
 
     @Override
-    public List<book> searchBooks() {
-        return new ArrayList<>();
+    public List<book> searchBooks(String searchKey, String searchValue) {
+        List<book> bookList = new ArrayList<>();
+        switch (searchKey) {
+            case "author":
+                SearchByAuthor searchByAuthor = new SearchByAuthor();
+                bookList = searchByAuthor.search(searchValue);
+            case "genre":
+                SearchByGenre searchByGenre = new SearchByGenre();
+                bookList = searchByGenre.search(searchValue);
+                break;
+            case "title":
+                SearchByTitle searchByTitle = new SearchByTitle();
+                bookList = searchByTitle.search(searchValue);
+                break;
+            default:
+                return null;
+        }
+        return bookList;
     }
 
     /**
