@@ -3,6 +3,9 @@ package UI;
 
 import java.util.Scanner;
 
+import DatabaseConnection.dbSingleton;
+import Factory.UserFactory.managerUserFactory;
+import Factory.UserFactory.normalUserFactory;
 import Factory.UserFactory.userFactory;
 import Models.User.*;
 
@@ -27,6 +30,7 @@ public class consoleBasedUI {
                 register();
                 break;
             case 3:
+                dbSingleton.saveCacheData("./Database/Cache/last_id_map.cache");
                 System.exit(0);
                 break;
             default:
@@ -37,7 +41,7 @@ public class consoleBasedUI {
         home();
     }
 
-    public void normalUserInterface(){
+    public void normalUserInterface(normalUser user){
         System.out.println("---!Welcome to the Library!---");
         System.out.println("List All Books");
         System.out.println("List All Copies for A Book");
@@ -69,6 +73,7 @@ public class consoleBasedUI {
                 
                 break;               
             case 7:
+                dbSingleton.saveCacheData("./Database/Cache/last_id_map.cache");
                 System.exit(0);
                 break;
             default:
@@ -76,7 +81,7 @@ public class consoleBasedUI {
                 break;
         }
 
-        normalUserInterface();
+        normalUserInterface(user);
     }
 
     public void managerInterface(managerUser user){
@@ -136,6 +141,7 @@ public class consoleBasedUI {
                 
                 break;                                 
             case 9:
+                dbSingleton.saveCacheData("./Database/Cache/last_id_map.cache");
                 System.exit(0);
                 break;
             default:
@@ -173,52 +179,46 @@ public class consoleBasedUI {
         System.out.print("Password: ");
         String password = getStringInput();
 
-        // 调用用户管理系统的登录方法，传入用户名和密码
-        userFactory normalUserFactory = new Factory.UserFactory.normalUserFactory();
-        user normalUser=normalUserFactory.createUser();
+        userFactory normalUserFactory = new normalUserFactory();
+        normalUser normalUser = (normalUser) normalUserFactory.createUser();
 
-        userFactory managerlUserFactory = new Factory.UserFactory.managerUserFactory();
-        user managerUser=normalUserFactory.createUser();
+        userFactory managerlUserFactory = new managerUserFactory();
+        managerUser managerUser = (managerUser) managerlUserFactory.createUser();
         
         int loginResultNormalUser = normalUser.login(username, password);
         int loginResultmanagerUser = managerUser.login(username, password);
 
         if(loginResultNormalUser == 1){
-            normalUserInterface();
-
+            normalUserInterface(normalUser);
         }
 
         if(loginResultmanagerUser == 1){
-            managerInterface();
+            managerInterface(managerUser);
         }
-
 
     }
 
     private void register(){
         System.out.print("Enter Username: ");
         String username = getStringInput();
-        System.out.print("ENter Password: ");
+        System.out.print("Enter Password: ");
         String password = getStringInput();
 
-        // 调用用户管理系统的登录方法，传入用户名和密码
-        userFactory normalUserFactory = new Factory.UserFactory.normalUserFactory();
-        user normalUser=normalUserFactory.createUser();
+        userFactory normalUserFactory = new normalUserFactory();
+        normalUser normalUser = (normalUser) normalUserFactory.createUser();
 
-        userFactory managerlUserFactory = new Factory.UserFactory.managerUserFactory();
-        user managerUser=normalUserFactory.createUser();
-        
-        int loginResultNormalUser = normalUser.login(username, password);
-        int loginResultmanagerUser = managerUser.login(username, password);
+        int registerResult = normalUser.register(username, password);
 
-        if(loginResultNormalUser == 1){
-            normalUserInterface();            
+        switch (registerResult) {
+            case 1:
+                normalUserInterface(normalUser);    
+                break;
+            case 0:
+                break;
+            case -1:
+                register();
+                break;
         }
-
-        if(loginResultmanagerUser == 1){
-            managerInterface();
-        }
-
     }
 
 
