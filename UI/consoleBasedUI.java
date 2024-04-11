@@ -2,6 +2,8 @@ package UI;
 
 import java.util.Scanner;
 
+import DatabaseConnection.dbSingleton;
+
 public class consoleBasedUI {
 
     public void home(){
@@ -23,6 +25,7 @@ public class consoleBasedUI {
                 register();
                 break;
             case 3:
+                dbSingleton.saveCacheData("./Database/Cache/last_id_map.cache");
                 System.exit(0);
                 break;
             default:
@@ -65,6 +68,7 @@ public class consoleBasedUI {
                 
                 break;               
             case 7:
+                dbSingleton.saveCacheData("./Database/Cache/last_id_map.cache");
                 System.exit(0);
                 break;
             default:
@@ -115,6 +119,7 @@ public class consoleBasedUI {
                 
                 break;                                 
             case 9:
+                dbSingleton.saveCacheData("./Database/Cache/last_id_map.cache");
                 System.exit(0);
                 break;
             default:
@@ -151,6 +156,8 @@ public class consoleBasedUI {
         String username = getStringInput();
         System.out.print("Password: ");
         String password = getStringInput();
+
+
 
     }
 
