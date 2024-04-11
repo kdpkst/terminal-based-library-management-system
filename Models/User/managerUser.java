@@ -99,7 +99,17 @@ public class managerUser implements user{
 
     @Override
     public List<bookCopy> viewAllCopiesforOneBook(int bid) {
-        return new ArrayList<>();
+        dbSingleton dbConnctor = dbSingleton.getInstance();
+        List<Map<String, String>> bookCopies = dbConnctor.preciseSearch("book_copies", "bid", String.valueOf(bid));
+        List<bookCopy> bookCopiesList = new ArrayList<>();
+        for (int i = 0; i < bookCopies.size(); i++){
+            Map<String, String> bookCopiesRecord = bookCopies.get(i);
+            int cid = Integer.parseInt(bookCopiesRecord.get("cid"));
+            int status = Integer.parseInt(bookCopiesRecord.get("status"));
+            bookCopy bookCopyObject = new bookCopy(cid, bid, status);
+            bookCopiesList.add(bookCopyObject);
+        }
+        return bookCopiesList;
     }
 
     @Override

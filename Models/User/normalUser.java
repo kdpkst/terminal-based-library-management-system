@@ -161,10 +161,16 @@ public class normalUser implements user{
     }
 
     public boolean borrowBook(int cid){
+        // dbSingleton dbConnector = dbSingleton.getInstance();
+        // List<Map<String, String>> bookcopyList = dbConnector.preciseSearch("book_copies", "cid", String.valueOf(cid));
+        // bookcopyList.
         return true;
     }
 
     public boolean returnBook(int cid){
+        dbSingleton dbConnector = dbSingleton.getInstance();
+
+
         return true;
     }
 
