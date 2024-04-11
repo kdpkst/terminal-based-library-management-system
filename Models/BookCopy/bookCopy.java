@@ -6,6 +6,12 @@ public class bookCopy {
     private int bid;
     private int status;
 
+    public bookCopy(int cid, int bid, int status) {
+        this.cid = cid;
+        this.bid = bid;
+        this.status = status;
+    }
+
     public int getCid() {
         return cid;
     }

@@ -6,6 +6,12 @@ import java.util.Map;
 
 import DatabaseConnection.dbSingleton;
 import Models.Book.book;
+import Models.BookCopy.bookCopy;
+import Models.BookFactory.bookFactory;
+import Models.BookFactory.businessBookFactory;
+import Models.BookFactory.historyBookFactory;
+import Models.BookFactory.novelBookFactory;
+import Models.BookFactory.scienceBookFactory;
 
 public class managerUser implements user{
 
@@ -54,11 +60,45 @@ public class managerUser implements user{
 
     @Override
     public List<book> viewAllBooks(){
-        return new ArrayList<>();
+        dbSingleton dbConnctor = dbSingleton.getInstance();
+        List<Map<String, String>> books = dbConnctor.listAll("books");
+        List<book> booksList = new ArrayList<>();
+        for (int i = 0; i < books.size(); i++){
+            Map<String, String> bookRecord = books.get(i);
+            int bid = Integer.parseInt(bookRecord.get("bid"));
+            String title = bookRecord.get("title");
+            String author = bookRecord.get("author");
+            String genre = bookRecord.get("genre");
+            int quantity_available = Integer.parseInt(bookRecord.get("quantity_available"));
+            switch(genre){
+                case "science":
+                    bookFactory sBookFactory = new scienceBookFactory();
+                    book scienceBook = sBookFactory.createBook(bid, title, author, genre, quantity_available);
+                    booksList.add(scienceBook);
+                    break;
+                case "business":
+                    bookFactory bBookFactory = new businessBookFactory();
+                    book businessBook = bBookFactory.createBook(bid, title, author, genre, quantity_available);
+                    booksList.add(businessBook);
+                    break;
+                case "novel":
+                    bookFactory nBookFactory = new novelBookFactory();
+                    book novelBook = nBookFactory.createBook(bid, title, author, genre, quantity_available);
+                    booksList.add(novelBook);
+                    break;
+                case "history":
+                    bookFactory hBookFactory = new historyBookFactory();
+                    book historyBook = hBookFactory.createBook(bid, title, author, genre, quantity_available);
+                    booksList.add(historyBook);
+                    break;
+            }
+        }
+
+        return booksList;
     }
 
     @Override
-    public List<book> viewAllCopiesforOneBook(int bid) {
+    public List<bookCopy> viewAllCopiesforOneBook(int bid) {
         return new ArrayList<>();
     }
 
