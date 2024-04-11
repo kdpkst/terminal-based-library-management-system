@@ -89,9 +89,8 @@ public class dbSingleton {
 
                     }
                 }
-
                 out.println();
-                // lastIdMap.put(tableName, dbSingleton.getNextId(tableName));
+                lastIdMap.put(tableName, dbSingleton.getNextId(tableName));
             }
             out.close();
             return true;
