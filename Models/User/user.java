@@ -18,8 +18,12 @@ public interface user {
     public int login(String username, String password);
     public List<book> viewAllBooks();
     public List<bookCopy> viewAllCopiesforOneBook(int bid);
-    // use Strategy pattern to switch between different search mechanism
-    // may consider searching by title, author, genre
-    public List<book> searchBooks();
+    
+    /**
+     * @param searchKey   The attribute of the book to search by (e.g., "author", "genre", "title").
+     * @param searchValue The value to search for within the specified attribute.
+     * @return A list of books matching the search criteria; null if the search key is invalid.
+     */
+    public List<book> searchBooks(String searchKey, String searchValue);
 
 } 
