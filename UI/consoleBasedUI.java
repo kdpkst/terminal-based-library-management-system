@@ -1,8 +1,12 @@
 package UI;
 
+
 import java.util.Scanner;
 
 import DatabaseConnection.dbSingleton;
+
+import Factory.UserFactory.userFactory;
+import Models.User.*;
 
 public class consoleBasedUI {
 
@@ -157,12 +161,54 @@ public class consoleBasedUI {
         System.out.print("Password: ");
         String password = getStringInput();
 
+        // 调用用户管理系统的登录方法，传入用户名和密码
+        userFactory normalUserFactory = new Factory.UserFactory.normalUserFactory();
+        user normalUser=normalUserFactory.createUser();
+
+        userFactory managerlUserFactory = new Factory.UserFactory.managerUserFactory();
+        user managerUser=normalUserFactory.createUser();
+        
+        int loginResultNormalUser = normalUser.login(username, password);
+        int loginResultmanagerUser = managerUser.login(username, password);
+
+        if(loginResultNormalUser == 1){
+            normalUserInterface();
+
+        }
+
+        if(loginResultmanagerUser == 1){
+            managerInterface();
+        }
+
+
 
 
     }
 
     private void register(){
+        System.out.print("Enter Username: ");
+        String username = getStringInput();
+        System.out.print("ENter Password: ");
+        String password = getStringInput();
 
+        // 调用用户管理系统的登录方法，传入用户名和密码
+        userFactory normalUserFactory = new Factory.UserFactory.normalUserFactory();
+        user normalUser=normalUserFactory.createUser();
+
+        userFactory managerlUserFactory = new Factory.UserFactory.managerUserFactory();
+        user managerUser=normalUserFactory.createUser();
+        
+        int loginResultNormalUser = normalUser.login(username, password);
+        int loginResultmanagerUser = managerUser.login(username, password);
+
+        if(loginResultNormalUser == 1){
+            normalUserInterface();            
+
+        }
+
+        if(loginResultmanagerUser == 1){
+            managerInterface();
+        }
 
     }
 
