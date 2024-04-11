@@ -174,17 +174,32 @@ public class normalUser implements user{
         updateBookCopyStatus(dbConnector, cid, "0");
 
         int bid = Integer.parseInt(bookCopyRecord.get("bid"));
-        decrementQuantityAvailableByOne(dbConnector, bid);
+        updateQuantityAvailable(dbConnector, bid, -1);
 
-        insertTransactionRecord(dbConnector, cid);
+        insertTransactionRecord(dbConnector, cid, "borrow", "incomplete");
 
         return true;
     }
 
     public boolean returnBook(int cid){
         dbSingleton dbConnector = dbSingleton.getInstance();
-
-
+        
+        // Find incomplete transaction for the given cid and current user
+        Map<String, String> incompleteTransaction = findIncompleteTransaction(dbConnector, cid, String.valueOf(this.getUid()));
+        if (incompleteTransaction == null) {
+            // No incomplete transaction found for the given cid and current user
+            return false;
+        }
+        
+        // Update incomplete transaction status to "completed" and get transaction time
+        LocalDate transactionDate = completeTransaction(dbConnector, incompleteTransaction);
+        
+        // Update book copy and book records
+        updateBookCopyAndBook(dbConnector, cid);
+        
+        // Calculate fine if the book is overdue
+        calculateFine(transactionDate);
+        
         return true;
     }
 
@@ -206,11 +221,11 @@ public class normalUser implements user{
         dbConnector.update("book_copies", "cid", String.valueOf(cid), updatedbookcopyList);
     }
 
-    private void decrementQuantityAvailableByOne(dbSingleton dbConnector, int bid) {
+    private void updateQuantityAvailable(dbSingleton dbConnector, int bid, int value) {
         List<Map<String, String>> bookList = dbConnector.preciseSearch("books", "bid", String.valueOf(bid));
         if (!bookList.isEmpty()) {
             Map<String, String> bookRecord = bookList.get(0);
-            int quantity_available = Integer.parseInt(bookRecord.get("quantity_available")) - 1;
+            int quantity_available = Integer.parseInt(bookRecord.get("quantity_available")) + value;
             bookRecord.put("quantity_available", String.valueOf(quantity_available));
             List<Map<String, String>> updatedbookList = new ArrayList<>();
             updatedbookList.add(bookRecord);
@@ -218,15 +233,14 @@ public class normalUser implements user{
         }
     }
 
-    private void insertTransactionRecord(dbSingleton dbConnector, int cid) {
+    private void insertTransactionRecord(dbSingleton dbConnector, int cid, String transactionType, String status) {
         List<Map<String, String>> data = new ArrayList<>();
         Map<String, String> recordInserted = new HashMap<>();
         recordInserted.put("tid", String.valueOf(dbSingleton.getNextId("transactions")));
         recordInserted.put("uid", String.valueOf(this.getUid()));
         recordInserted.put("cid", String.valueOf(cid));
-        recordInserted.put("transaction_type", "borrow");
         recordInserted.put("transaction_date", getCurrentDate());
-        recordInserted.put("status", "incomplete");
+        recordInserted.put("status", status);
         data.add(recordInserted);
         dbConnector.insert("transactions", data);
     }
@@ -234,6 +248,59 @@ public class normalUser implements user{
     private String getCurrentDate() {
         return LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE);
     }
+
+    private Map<String, String> findIncompleteTransaction(dbSingleton dbConnector, int cid, String uid) {
+        List<Map<String, String>> transactions = dbConnector.preciseSearch("transactions", "cid", String.valueOf(cid));
+        for (Map<String, String> transaction : transactions) {
+            if (transaction.get("status").equals("incomplete") && transaction.get("uid").equals(uid)) {
+                return transaction;
+            }
+        }
+        return null;
+    }
+    
+    private LocalDate completeTransaction(dbSingleton dbConnector, Map<String, String> incompleteTransaction) {
+        String tid = incompleteTransaction.get("tid");
+        incompleteTransaction.put("status", "completed");
+        dbConnector.update("transactions", "tid", tid, List.of(incompleteTransaction));
+        // Get transaction date
+        String transactionDateStr = incompleteTransaction.get("transaction_date");
+        return LocalDate.parse(transactionDateStr, DateTimeFormatter.ISO_LOCAL_DATE);
+    }
+    
+    private void updateBookCopyAndBook(dbSingleton dbConnector, int cid) {
+        // Update book copy status to available
+        Map<String, String> bookCopyRecord = getBookCopyRecord(dbConnector, cid);
+        bookCopyRecord.put("status", "1");
+        dbConnector.update("book_copies", "cid", String.valueOf(cid), List.of(bookCopyRecord));
+    
+        // Increment quantity available for the book
+        int bid = Integer.parseInt(bookCopyRecord.get("bid"));
+        Map<String, String> bookRecord = getBookRecord(dbConnector, bid);
+        int quantityAvailable = Integer.parseInt(bookRecord.get("quantity_available")) + 1;
+        bookRecord.put("quantity_available", String.valueOf(quantityAvailable));
+        dbConnector.update("books", "bid", String.valueOf(bid), List.of(bookRecord));
+    }
+
+    private Map<String, String> getBookRecord(dbSingleton dbConnector, int bid) {
+        List<Map<String, String>> bookList = dbConnector.preciseSearch("books", "bid", String.valueOf(bid));
+        if (!bookList.isEmpty()) {
+            return bookList.get(0);
+        } else {
+            return null; 
+        }
+    }
+    
+    private void calculateFine(LocalDate transactionDate) {
+        LocalDate now = LocalDate.now();
+        long daysBetween = java.time.temporal.ChronoUnit.DAYS.between(transactionDate, now);
+        if (daysBetween > 30) {
+            // Calculate and assign $5 fine
+            // Example: Assuming there's a method to assign fine to the user
+            // assignFineToUser(5);
+        }
+    }
+
 
     public int getUid() {
         return uid;

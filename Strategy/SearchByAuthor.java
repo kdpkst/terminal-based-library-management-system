@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class SearchByName implements SearchStrategy {
+public class SearchByAuthor implements SearchStrategy {
 
     @Override
     public List<book> search(String authorName){
