@@ -94,7 +94,9 @@ public class dbSingleton {
             }
             out.close();
             return true;
-        } catch (IOException e) {
+        } 
+        
+        catch (IOException e) {
             return false;
         }
     }
@@ -157,8 +159,9 @@ public class dbSingleton {
         }
     }
 
-    // Logic Completed (need modification: return a hashtable-like variable)
-    public int update(String tableName, String keyField, String keyValue, String[] newData) {
+
+
+    public int update(String tableName, String keyField, String keyValue, List<Map<String, String>> newData) {
         try {
             File inputFile = new File("./Database/" + tableName + ".csv");
             File tempFile = new File("Database/temp.csv");
@@ -167,14 +170,13 @@ public class dbSingleton {
             PrintWriter writer = new PrintWriter(new FileWriter(tempFile));
     
             String line = reader.readLine();
+            String[] headerFields = line.split(",");
             writer.println(line);
     
             int count = 0;
-            String[] fields;
             int attributeIndex = -1;
-            fields = line.split(",");
-            for (int i = 0; i < fields.length; i++) {
-                if (keyField.equals(fields[i])) {
+            for (int i = 0; i < headerFields.length; i++) {
+                if (keyField.equals(headerFields[i])) {
                     attributeIndex = i;
                     break;
                 }
@@ -182,16 +184,24 @@ public class dbSingleton {
     
             while ((line = reader.readLine()) != null) {
                 boolean updated = false;
-                fields = line.split(",");
-                for (int j = 0; j < fields.length; j++) {
-                    if (fields[j].equals(keyValue) && attributeIndex == j) {
+                String[] dataFields = line.split(",");
+                for (int j = 0; j < dataFields.length; j++) {
+                    if (dataFields[j].equals(keyValue) && attributeIndex == j) {
                         count++;
                         updated = true;
-                        writer.print(newData[0]);
-                        for (int k = 1; k < newData.length; k++) {
-                            writer.print("," + newData[k]);
+                        for (Map<String, String> map : newData) {
+                            for (int k = 0; k < headerFields.length; k++) {
+                                String fieldName = headerFields[k];
+                                if (!map.containsKey(fieldName)) {
+                                    throw new IllegalArgumentException("Incomplete data. Missing field: " + fieldName);
+                                }
+                                writer.print(map.get(fieldName));
+                                if (k < headerFields.length - 1) {
+                                    writer.print(",");
+                                }
+                            }
+                            writer.println();
                         }
-                        writer.println();
                         break;
                     }
                 }
@@ -205,21 +215,17 @@ public class dbSingleton {
     
             inputFile.delete();
             tempFile.renameTo(inputFile);
-     
-            // if (count > 0) {
-            //     System.out.println(count + " record(s) updated successfully!");
-            // } else {
-            //     System.out.println("No matching record to update!");
-            // }
-
+    
             return count;
-
+    
         } catch (IOException e) {
-            // System.err.println("Error occurred while updating record: " + e.getMessage());
             return -1;
         }
-    }
+    }    
     
+
+
+
     /**
      * @param tableName The name of the database table to perform the fuzzy search
      * @param keyField The attribute for fuzzy search
