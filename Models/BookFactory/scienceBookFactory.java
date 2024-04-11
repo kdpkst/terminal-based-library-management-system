@@ -5,7 +5,7 @@ import Models.Book.scienceBook;
 
 public class scienceBookFactory extends bookFactory{
     @Override
-    public book createSpecificBook(int bid, String title, String author, String genre, int quantity_available) {
+    public book createBook(int bid, String title, String author, String genre, int quantity_available) {
         return new scienceBook(bid, title, author, genre, quantity_available);
     }   
 }
