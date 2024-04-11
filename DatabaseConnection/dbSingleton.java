@@ -75,20 +75,23 @@ public class dbSingleton {
             String[] fields = line.split(",");
 
             for (Map<String, String> map : data) {
-                for (Map.Entry<String, String> entry : map.entrySet()) {
-                    String key = entry.getKey();
-                    String value = entry.getValue();
-                    for (int i = 0; i < fields.length; i++) {
-                        if(key.equals(fields[i])){
-                            out.print(value);
-                            if(i<fields.length-1){
-                                out.print(",");
-                            }
+
+                for (int i = 0; i < fields.length; i++) {
+                    for (Map.Entry<String, String> entry : map.entrySet()) {
+                        String key = entry.getKey();
+                        String value = entry.getValue();
+                    if(key.equals(fields[i])){
+                        out.print(value);
+                        if(i<fields.length-1){
+                            out.print(",");
                         }
                     }
+
+                    }
                 }
+
                 out.println();
-                lastIdMap.put(tableName, dbSingleton.getNextId(tableName));
+                // lastIdMap.put(tableName, dbSingleton.getNextId(tableName));
             }
             out.close();
             return true;
@@ -96,6 +99,8 @@ public class dbSingleton {
             return false;
         }
     }
+
+
     
     /**
      * @param tableName The name of the database table from which records are to be deleted

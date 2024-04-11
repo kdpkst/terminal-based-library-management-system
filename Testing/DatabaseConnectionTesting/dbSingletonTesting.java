@@ -23,20 +23,21 @@ public class dbSingletonTesting {
 
         List<Map<String, String>> data = new ArrayList<Map<String,String>>();
         Map<String, String> map1 = new HashMap<>();
-        map1.put("cid", "1");
-        map1.put("bid", "1");
         map1.put("status", "2");
+        map1.put("bid", "1");
+        map1.put("cid", "1");
         data.add(map1);
+
         Map<String, String> map2 = new HashMap<>();
+        map2.put("status", "9");
         map2.put("cid", "3");
         map2.put("bid", "4");
-        map2.put("status", "9");
         data.add(map2);
 
         Map<String, String> map3 = new HashMap<>();
         map3.put("cid", "09");
-        map3.put("bid", "33");
         map3.put("status", "af");
+        map3.put("bid", "33");
         data.add(map3);
         
         dbConnector.insert("book_copies", data);
