@@ -83,9 +83,9 @@ public class normalUser implements user{
         List<Map<String, String>> userRecords = dbConnctor.preciseSearch("users", "username", username);
         // the username must be unique
         if (userRecords.size() == 0){
-            // Map<String, Integer> idMap = dbSingleton.getidMap();
+            int uid = dbSingleton.getNextId("users");
             Map<String, String> recordInserted = new HashMap<String, String>();
-            // recordInserted.put("uid", String.valueOf(idMap.get("users") + 1));
+            recordInserted.put("uid", String.valueOf(uid));
             recordInserted.put("username", username);
             recordInserted.put("password", password);
             recordInserted.put("type", String.valueOf(this.getType()));
@@ -94,7 +94,7 @@ public class normalUser implements user{
             List<Map<String, String>> result = new ArrayList<>();
             result.add(recordInserted);
     
-            // this.setUid(idMap.get("users") + 1);
+            this.setUid(uid);
             this.setUsername(username);
             this.setPassword(password);
             this.setBidWant("none");
@@ -157,5 +157,4 @@ public class normalUser implements user{
         return type;
     }
 
-    
 }

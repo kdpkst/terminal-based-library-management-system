@@ -10,6 +10,7 @@ import java.util.Map;
 public class dbSingleton {
 
     private static dbSingleton instance;
+    private static Map<String, Integer> lastIdMap;
 
     private dbSingleton(){
 
@@ -20,6 +21,42 @@ public class dbSingleton {
             instance = new dbSingleton();
         }
         return instance;
+    }
+    
+    public static void initializeLastIdMap(String filePath) {
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(filePath));
+                    
+            String line;
+            lastIdMap = new HashMap<>();
+            while ((line = reader.readLine()) != null) {
+                String[] record = line.split(":");
+                lastIdMap.put(record[0], Integer.parseInt(record[1]));
+            }
+
+            reader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void saveCacheData(String filePath) {
+        try {
+            FileWriter writer = new FileWriter(filePath);
+            PrintWriter out = new PrintWriter(writer);
+
+            for (Map.Entry<String, Integer> entry : lastIdMap.entrySet()) {
+                out.println(entry.getKey() + ":" + entry.getValue());
+            }
+
+            out.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static int getNextId(String tableName) {
+        return lastIdMap.getOrDefault(tableName, 0) + 1;
     }
     
     /**
@@ -50,8 +87,8 @@ public class dbSingleton {
                         }
                     }
                 }
-
                 out.println();
+                lastIdMap.put(tableName, dbSingleton.getNextId(tableName));
             }
             out.close();
             return true;
