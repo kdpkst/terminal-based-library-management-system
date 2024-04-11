@@ -79,7 +79,7 @@ public class consoleBasedUI {
         normalUserInterface();
     }
 
-    public void managerInterface(){
+    public void managerInterface(managerUser user){
         System.out.println("---Manager System---");
         System.out.println("List All Books");
         System.out.println("List All Copies for A Book");
@@ -95,19 +95,36 @@ public class consoleBasedUI {
         int option = getIntInput();
         switch (option) {
             case 1:
-                
+                user.viewAllBooks();
+                //print
                 break;
             case 2:
-                
+                System.out.println("Selected bid:");
+                String bid=getStringInput();
+                int numbid = Integer.parseInt(bid);
+                user.viewAllCopiesforOneBook(numbid);
                 break;
             case 3:
-                
+                System.out.println("Search fields:");
+                String fields=getStringInput();
+                System.out.println("Search value:");
+                String value=getStringInput();
+                user.searchBooks(fields, value);
                 break;
             case 4:
-                
+                System.out.println("title::");
+                String title=getStringInput();
+                System.out.println("author");
+                String author=getStringInput();
+                System.out.println("genre");
+                String genre=getStringInput();
+                user.addBook(title, author, genre);
                 break;
             case 5:
-                
+                System.out.println("Selected cid:");
+                String cid=getStringInput();
+                int numcid = Integer.parseInt(cid);
+                user.removeBook(numcid);
                 break;
             case 6:
                 
@@ -126,7 +143,7 @@ public class consoleBasedUI {
                 break;
         }
 
-        managerInterface();
+        managerInterface(user);
     }
 
     public static int getIntInput() {        
@@ -196,7 +213,6 @@ public class consoleBasedUI {
 
         if(loginResultNormalUser == 1){
             normalUserInterface();            
-
         }
 
         if(loginResultmanagerUser == 1){
