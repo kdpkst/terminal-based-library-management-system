@@ -26,4 +26,11 @@ public interface user {
      */
     public List<book> searchBooks(String searchKey, String searchValue);
 
+    //I add these methods in the interface to get attributes of normalUser and easily
+    int getUid();
+    String getUsername();
+    String getPassword();
+    int getType();
+    String getBidWant();
+
 } 
