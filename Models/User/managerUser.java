@@ -115,6 +115,7 @@ public class managerUser implements user{
         return bookCopiesList;
     }
 
+
     @Override
     public List<book> searchBooks(String searchKey, String searchValue) {
         List<book> bookList = new ArrayList<>();
@@ -138,17 +139,48 @@ public class managerUser implements user{
 
     public boolean addBook(String title, String author, String genre){
         dbSingleton dbConnctor = dbSingleton.getInstance();
-        List<Map<String,String>> bookRecord= dbConnctor.preciseSearch("books", "title", title);
-        if(bookRecord.size()==0){
-            int bid=dbConnctor.getNextId("books");
-            Map<String, String> recordInserted = new HashMap<String, String>();
-            recordInserted.put("bid", String.valueOf(bid));
-            recordInserted.put("title", title);
-            recordInserted.put("author", author);
-            recordInserted.put("genre", genre);
-            List<Map<String, String>> bookresult = new ArrayList<>();
-            bookresult.add(recordInserted);
+        List<Map<String,String>> bookRecords= dbConnctor.preciseSearch("books", "title", title);
+        
+        List<Map<String, String>> filteredBookRecords = new ArrayList<>();
+
+        for (Map<String, String> bookRecord : bookRecords) {
+            String authorFromRecord = bookRecord.get("author");
+            if (author.equals(authorFromRecord)) {
+                filteredBookRecords.add(bookRecord);
+            }
         }
+
+
+        if(filteredBookRecords.size()==0){
+            int bid=dbConnctor.getNextId("books");
+            Map<String, String> bookInserted = new HashMap<String, String>();
+            bookInserted.put("bid", String.valueOf(bid));
+            bookInserted.put("title", title);
+            bookInserted.put("author", author);
+            bookInserted.put("genre", genre);
+            List<Map<String, String>> bookresult = new ArrayList<>();
+            bookresult.add(bookInserted);
+            Boolean bookInsertflag =dbConnctor.insert("books",bookresult);
+            if(!bookInsertflag){
+                return false;
+            }
+            filteredBookRecords.add(bookInserted);
+        }
+
+        String bidInsert=filteredBookRecords.get(0).get("bid");
+        int cid=dbConnctor.getNextId("book_copies");
+        Map<String, String> copyInserted = new HashMap<String, String>();
+            copyInserted.put("cid", String.valueOf(cid));
+            copyInserted.put("bid", bidInsert);
+            copyInserted.put("status", "1");
+            List<Map<String, String>> copyresult = new ArrayList<>();
+            copyresult.add(copyInserted);
+            Boolean copyInsertflag =dbConnctor.insert("books_copies",copyresult);
+            if(!copyInsertflag){
+                return false;
+            }
+
+
 
         return true;
     }
@@ -156,14 +188,24 @@ public class managerUser implements user{
     public boolean removeBook(int cid){
         dbSingleton dbConnctor = dbSingleton.getInstance();
         List<Map<String, String>> bookCopies = dbConnctor.preciseSearch("book_copies", "cid", String.valueOf(cid));
+        if(bookCopies.size()==0){return false;}
+        String status=bookCopies.get(0).get("status");
+        if(status.equals("0")){return false;}
         String bid=bookCopies.get(0).get("bid");
-        int deletenumber=dbConnctor.delete("book_copies","cid",String.valueOf(cid));
-        if(deletenumber<=0){
+
+
+        int deleteCopynumber=dbConnctor.delete("book_copies","cid",String.valueOf(cid));
+        if(deleteCopynumber<=0){
             return false;
         }
 
         List<Map<String,String>> copyRecords= dbConnctor.preciseSearch("book_copies", "bid", bid);
-        
+        if(copyRecords.size()==0){
+            int deleteBooknumber=dbConnctor.delete("books", "bid", bid);
+            if(deleteBooknumber<=0){
+                return false;
+            }
+        }
         return true;
     }
 
