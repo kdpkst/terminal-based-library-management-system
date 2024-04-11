@@ -4,6 +4,7 @@ public class bookCopy {
 
     private int cid;
     private int bid;
+    // 1: available; 0: unavailable
     private int status;
 
     public bookCopy(int cid, int bid, int status) {

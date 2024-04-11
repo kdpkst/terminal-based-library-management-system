@@ -101,8 +101,6 @@ public class dbSingleton {
         }
     }
 
-
-    
     /**
      * @param tableName The name of the database table from which records are to be deleted
      * @param keyField The attribute for deletion
@@ -158,8 +156,6 @@ public class dbSingleton {
             return -1;
         }
     }
-
-
 
     public int update(String tableName, String keyField, String keyValue, List<Map<String, String>> newData) {
         try {
@@ -223,9 +219,6 @@ public class dbSingleton {
         }
     }    
     
-
-
-
     /**
      * @param tableName The name of the database table to perform the fuzzy search
      * @param keyField The attribute for fuzzy search

@@ -1,5 +1,7 @@
 package Models.User;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -8,11 +10,8 @@ import java.util.Map;
 import DatabaseConnection.dbSingleton;
 import Models.Book.book;
 import Models.BookCopy.bookCopy;
-import Models.BookFactory.bookFactory;
-import Models.BookFactory.businessBookFactory;
-import Models.BookFactory.historyBookFactory;
-import Models.BookFactory.novelBookFactory;
-import Models.BookFactory.scienceBookFactory;
+import Factory.BookFactory.*;
+import Models.Transaction.transaction;
 
 public class normalUser implements user{
     
@@ -160,20 +159,147 @@ public class normalUser implements user{
         }
     }
 
-    public boolean borrowBook(int cid){
-        // dbSingleton dbConnector = dbSingleton.getInstance();
-        // List<Map<String, String>> bookcopyList = dbConnector.preciseSearch("book_copies", "cid", String.valueOf(cid));
-        // bookcopyList.
-        return true;
+    /**
+     * @param cid
+     * @return
+     */
+    // public int borrowBook(int cid){
+    //     dbSingleton dbConnector = dbSingleton.getInstance();
+    //     List<Map<String, String>> bookcopyList = dbConnector.preciseSearch("book_copies", "cid", String.valueOf(cid));
+    //     if (bookcopyList.size() == 1){
+    //         Map<String, String> bookCopyRecord = bookcopyList.get(0);
+    //         int bid = Integer.parseInt(bookCopyRecord.get("bid"));
+    //         int status = Integer.parseInt(bookCopyRecord.get("status"));
+    //         if (status == 1){
+    //             bookCopyRecord.put("status", "0");
+    //             List<Map<String, String>> updatedbookcopyList = new ArrayList<>();
+    //             updatedbookcopyList.add(bookCopyRecord);
+    //             int updatedBookCopy = dbConnector.update("book_copies", "cid", String.valueOf(cid), updatedbookcopyList);
+
+    //             List<Map<String, String>> bookList = dbConnector.preciseSearch("books", "bid", String.valueOf(bid));
+    //             Map<String, String> bookRecord = bookList.get(0);
+    //             int quantity_available = Integer.parseInt(bookRecord.get("quantity_available")) - 1;
+    //             String qa = String.valueOf(quantity_available);
+    //             bookRecord.put("quantity_available", qa);
+    //             List<Map<String, String>> updatedbookList = new ArrayList<>();
+    //             updatedbookList.add(bookRecord);
+    //             int updatedBook = dbConnector.update("books", "bid", String.valueOf(bid), updatedbookList);
+
+    //             List<Map<String, String>> data = new ArrayList<>();
+    //             Map<String, String> recordInserted = new HashMap<>();
+    //             // Get current date in the format "YYYY-MM-DD"
+    //             String transactionDate = LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE);
+    //             recordInserted.put("transaction_date", transactionDate);
+    //             recordInserted.put("tid", String.valueOf(dbSingleton.getNextId("transactions")));
+    //             recordInserted.put("uid", String.valueOf(this.getUid()));
+    //             recordInserted.put("cid", String.valueOf(cid));
+    //             recordInserted.put("transaction_type", "borrow");
+    //             recordInserted.put("status", "incomplete");
+    //             boolean transactionInserted = dbConnector.insert("transactions", data);
+
+    //             return 1;
+    //         }
+    //         else {
+    //             // this book is unavailable
+    //             return 0;
+    //         }
+    //     }
+    //     else {
+    //         // input cid does not exist
+    //         return -1;
+    //     }
+    // }
+
+    public boolean borrowBook(int cid) {
+        try {
+            dbSingleton dbConnector = dbSingleton.getInstance();
+
+            // Check if book copy exists and is available
+            Map<String, String> bookCopyRecord = getBookCopyRecord(dbConnector, cid);
+            if (bookCopyRecord == null) {
+                // Input CID does not exist
+                return false;
+            }
+            if (!isBookAvailable(bookCopyRecord)) {
+                // Book is unavailable
+                return false;
+            }
+
+            // Update book copy status to borrowed
+            updateBookCopyStatus(dbConnector, cid);
+
+            // Decrement quantity available for the book
+            int bid = Integer.parseInt(bookCopyRecord.get("bid"));
+            decrementQuantityAvailable(dbConnector, bid);
+
+            // Insert transaction record
+            insertTransactionRecord(dbConnector, cid);
+
+            return true;
+        } catch (Exception e) {
+            // Log or handle the exception appropriately
+            e.printStackTrace();
+            return false;
+        }
     }
 
+    private Map<String, String> getBookCopyRecord(dbSingleton dbConnector, int cid) {
+        List<Map<String, String>> bookcopyList = dbConnector.preciseSearch("book_copies", "cid", String.valueOf(cid));
+        return bookcopyList.size() == 1 ? bookcopyList.get(0) : null;
+    }
+
+    private boolean isBookAvailable(Map<String, String> bookCopyRecord) {
+        int status = Integer.parseInt(bookCopyRecord.get("status"));
+        return status == 1;
+    }
+
+    private void updateBookCopyStatus(dbSingleton dbConnector, int cid) {
+        Map<String, String> bookCopyRecord = new HashMap<>();
+        bookCopyRecord.put("status", "0");
+        List<Map<String, String>> updatedbookcopyList = new ArrayList<>();
+        updatedbookcopyList.add(bookCopyRecord);
+        dbConnector.update("book_copies", "cid", String.valueOf(cid), updatedbookcopyList);
+    }
+
+    private void decrementQuantityAvailable(dbSingleton dbConnector, int bid) {
+        List<Map<String, String>> bookList = dbConnector.preciseSearch("books", "bid", String.valueOf(bid));
+        if (!bookList.isEmpty()) {
+            Map<String, String> bookRecord = bookList.get(0);
+            int quantity_available = Integer.parseInt(bookRecord.get("quantity_available")) - 1;
+            bookRecord.put("quantity_available", String.valueOf(quantity_available));
+            List<Map<String, String>> updatedbookList = new ArrayList<>();
+            updatedbookList.add(bookRecord);
+            dbConnector.update("books", "bid", String.valueOf(bid), updatedbookList);
+        }
+    }
+
+    private void insertTransactionRecord(dbSingleton dbConnector, int cid) {
+        List<Map<String, String>> data = new ArrayList<>();
+        Map<String, String> recordInserted = new HashMap<>();
+        recordInserted.put("tid", String.valueOf(dbSingleton.getNextId("transactions")));
+        recordInserted.put("uid", String.valueOf(this.getUid()));
+        recordInserted.put("cid", String.valueOf(cid));
+        recordInserted.put("transaction_type", "borrow");
+        recordInserted.put("transaction_date", getCurrentDate());
+        recordInserted.put("status", "incomplete");
+        data.add(recordInserted);
+        dbConnector.insert("transactions", data);
+    }
+
+    /**
+     * @param cid
+     * @return
+     */
     public boolean returnBook(int cid){
         dbSingleton dbConnector = dbSingleton.getInstance();
 
-
         return true;
     }
 
+
+    private String getCurrentDate() {
+        return LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE);
+    }
 
     public int getUid() {
         return uid;

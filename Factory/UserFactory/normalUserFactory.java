@@ -1,4 +1,4 @@
-package Models.UserFactory;
+package Factory.UserFactory;
 
 import Models.User.normalUser;
 import Models.User.user;

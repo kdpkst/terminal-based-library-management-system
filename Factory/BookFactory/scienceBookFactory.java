@@ -1,4 +1,4 @@
-package Models.BookFactory;
+package Factory.BookFactory;
 
 import Models.Book.book;
 import Models.Book.scienceBook;

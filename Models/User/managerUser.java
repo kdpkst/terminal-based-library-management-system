@@ -5,13 +5,11 @@ import java.util.List;
 import java.util.Map;
 
 import DatabaseConnection.dbSingleton;
+
 import Models.Book.book;
 import Models.BookCopy.bookCopy;
-import Models.BookFactory.bookFactory;
-import Models.BookFactory.businessBookFactory;
-import Models.BookFactory.historyBookFactory;
-import Models.BookFactory.novelBookFactory;
-import Models.BookFactory.scienceBookFactory;
+import Factory.BookFactory.*;
+
 
 public class managerUser implements user{
 
