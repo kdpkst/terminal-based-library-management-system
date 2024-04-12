@@ -50,7 +50,7 @@ public class dbSingletonTesting {
         map4.put("status", "cyz is dalao");
         map4.put("bid", "39");
         data.add(map4);
-        dbConnector.update("book_copies", "status", "cyz", data);
+        dbConnector.update("book_copies", "status", "1", data);
 
     }
 }

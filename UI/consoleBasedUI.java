@@ -1,12 +1,15 @@
 package UI;
 
 
+import java.util.List;
 import java.util.Scanner;
 
 import DatabaseConnection.dbSingleton;
 import Factory.UserFactory.managerUserFactory;
 import Factory.UserFactory.normalUserFactory;
 import Factory.UserFactory.userFactory;
+import Models.Book.book;
+import Models.BookCopy.bookCopy;
 import Models.User.*;
 
 public class consoleBasedUI {
@@ -17,7 +20,7 @@ public class consoleBasedUI {
         System.out.println("2. Register");
         System.out.println("3. Exit");
 
-        System.out.print("Choose an option: ");
+        System.out.print("Choose an option(please enter a number): ");
         int option = getIntInput();
         switch (option) {
             case 1:
@@ -42,6 +45,7 @@ public class consoleBasedUI {
     }
 
     public void normalUserInterface(normalUser user){
+        System.out.println();
         System.out.println("---!Welcome to the Library!---");
         System.out.println("List All Books");
         System.out.println("List All Copies for A Book");
@@ -85,38 +89,144 @@ public class consoleBasedUI {
     }
 
     public void managerInterface(managerUser user){
+        System.out.println();
         System.out.println("---Manager System---");
-        System.out.println("List All Books");
-        System.out.println("List All Copies for A Book");
-        System.out.println("Search Book");
-        System.out.println("Add Book");
-        System.out.println("Remove Book");
-        System.out.println("List All Users");
-        System.out.println("Search User");
-        System.out.println("Back to Home");
-        System.out.println("Exit");
+        System.out.println("1.List All Books");
+        System.out.println("2.List All Copies for A Book");
+        System.out.println("3.Search Book");
+        System.out.println("4.Add Book");
+        System.out.println("5.Remove Book");
+        System.out.println("6.List All Users");
+        System.out.println("7.Search User");
+        System.out.println("8.Back to Home");
+        System.out.println("9.Exit");
+        System.out.println();
 
-        System.out.print("Choose an option: ");
+        System.out.print("Choose an option(please enter a number): ");
         int option = getIntInput();
         switch (option) {
             case 1:
-                user.viewAllBooks();
+
+                List<book> books=user.viewAllBooks();
+                if(books.size()==0){
+                    System.out.println();
+                    System.out.println("There's no book in the system, please add a book first !");
+                    break;
+                }
+                System.err.println();
+                System.out.printf("%-10s %-30s %-20s %-15s %-10s%n", "Book ID", "Title", "Author", "Genre", "Quantity Available");
+
+                for (book book : books) {
+                    
+                    System.out.printf("%-10d %-30s %-20s %-15s %-10d%n", 
+                                      book.getBid(), 
+                                      book.getTitle(), 
+                                      book.getAuthor(), 
+                                      book.getGenre(), 
+                                      book.getQuantityAvailable());
+                }
+                System.err.println();
                 break;
+
             case 2:
+                System.out.println();
+                System.out.println("Selected bid:");
+                int bid=getIntInput();
+                List<bookCopy> copies=user.viewAllCopiesforOneBook(bid);
+                System.out.println();
+                if(copies.size()==0){
+                    System.out.println();
+                    System.out.println("There's no matched copies in the System, please list all books and then enter vaild bid !");
+                    break;
+                }
+                System.out.printf("%-5s %-5s %-10s%n", "CID", "BID", "Status");
+
                 
+                for (bookCopy copy : copies) {
+                    int copy_cid = copy.getCid();
+                    int copy_bid = copy.getBid();
+                    int copy_status = copy.getStatus();
+
+                    System.out.printf("%-5d %-5d %-10d%n", copy_cid, copy_bid, copy_status);
+                }
+
+                System.out.println();
                 break;
             case 3:
-                
+                //while searching fiels not exists may have some error and exit the programme
+                System.out.println("Search fields:");
+                String fields=getStringInput();
+                System.out.println("Search value:");
+                String value=getStringInput();
+                List<book> searchedbooks=user.searchBooks(fields, value);
+                if(searchedbooks.size()==0){
+                    System.out.println();
+                    System.out.println("There's no matched book in the system !");
+                    break;
+                }
+
+                System.err.println();
+                System.out.printf("%-10s %-30s %-20s %-15s %-10s%n", "Book ID", "Title", "Author", "Genre", "Quantity Available");
+
+                for (book book : searchedbooks) {
+                    
+                    System.out.printf("%-10d %-30s %-20s %-15s %-10d%n", 
+                                      book.getBid(), 
+                                      book.getTitle(), 
+                                      book.getAuthor(), 
+                                      book.getGenre(), 
+                                      book.getQuantityAvailable());
+                }
+                System.err.println();
                 break;
+
             case 4:
+               //there exists some problems in case4
+                System.out.println("title::");
+                String title=getStringInput();
+                System.out.println("author");
+                String author=getStringInput();
+                System.out.println("genre");
+                String genre=getStringInput();
+                Boolean outcome= user.addBook(title, author, genre);
+                if(outcome){
+                    System.out.println("Add book successfully !");
+                    break;
+                }
+
+                else{
+                    System.out.println("Failed to add books, please try again !");
+                    break;
+                }
                 
-                break;
             case 5:
-                
+                //there exists some problems in case 5
+                System.out.println("Selected cid:");
+                String cid=getStringInput();
+                int numcid = Integer.parseInt(cid);
+                user.removeBook(numcid);
                 break;
             case 6:
+
+                List<user> users=user.viewAllUsers();
+                System.out.println();
+
+
+                System.out.printf("%-5s %-15s %-15s %-5s %-10s%n", "UID", "Username", "Password", "Type", "Bid Want");
+
                 
-                break;  
+                for (user userViewed : users) {
+
+                    System.out.printf("%-5d %-15s %-15s %-5d %-10s%n", 
+                                    userViewed.getUid(), 
+                                    userViewed.getUsername(), 
+                                    userViewed.getPassword(), 
+                                    userViewed.getType(), 
+                                    userViewed.getBidWant());
+                     }
+
+                break;
+
             case 7:
                 
                 break;  
@@ -157,6 +267,7 @@ public class consoleBasedUI {
     }
 
     private void login(){
+        System.out.println();
         System.out.print("Username: ");
         String username = getStringInput();
         System.out.print("Password: ");
@@ -179,9 +290,14 @@ public class consoleBasedUI {
             managerInterface(managerUser);
         }
 
+        else{
+            System.out.println();
+            System.out.println("Login failed, please register or login again !");}
+
     }
 
     private void register(){
+        System.out.println();
         System.out.print("Enter Username: ");
         String username = getStringInput();
         System.out.print("Enter Password: ");

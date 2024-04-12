@@ -158,6 +158,7 @@ public class managerUser implements user{
             bookInserted.put("title", title);
             bookInserted.put("author", author);
             bookInserted.put("genre", genre);
+            bookInserted.put("quantity_available", "0");
             List<Map<String, String>> bookresult = new ArrayList<>();
             bookresult.add(bookInserted);
             Boolean bookInsertflag =dbConnctor.insert("books",bookresult);
@@ -168,22 +169,31 @@ public class managerUser implements user{
         }
 
         String bidInsert=filteredBookRecords.get(0).get("bid");
+        String availableNumber=filteredBookRecords.get(0).get("quantity_available");
+        int updateAvailableNumber=Integer.parseInt(availableNumber)+1;
+        Map<String, String> updatedRecord=filteredBookRecords.get(0);
+        updatedRecord.put("quantity_available", String.valueOf(updateAvailableNumber));
+        List<Map<String, String>> updatedRecords=new ArrayList<>();
+        updatedRecords.add(updatedRecord);
+        dbConnctor.update("books", "bid", bidInsert, updatedRecords);
+
         int cid=dbConnctor.getNextId("book_copies");
+        
         Map<String, String> copyInserted = new HashMap<String, String>();
-            copyInserted.put("cid", String.valueOf(cid));
-            copyInserted.put("bid", bidInsert);
-            copyInserted.put("status", "1");
-            List<Map<String, String>> copyresult = new ArrayList<>();
-            copyresult.add(copyInserted);
-            Boolean copyInsertflag =dbConnctor.insert("books_copies",copyresult);
-            if(!copyInsertflag){
-                return false;
-            }
-
-
-
+        copyInserted.put("cid", String.valueOf(cid));
+        copyInserted.put("bid", bidInsert);
+        copyInserted.put("status", "1");
+        List<Map<String, String>> copyresult = new ArrayList<>();
+        copyresult.add(copyInserted);
+        Boolean copyInsertflag =dbConnctor.insert("books_copies",copyresult);
+        if(!copyInsertflag){
+            return false;
+        }
         return true;
     }
+
+    
+
 
     public boolean removeBook(int cid){
         dbSingleton dbConnctor = dbSingleton.getInstance();
@@ -219,22 +229,23 @@ public class managerUser implements user{
             String username = userRecord.get("username");
             String password = userRecord.get("password");
             String bidWant=userRecord.get("bid_want");
-            String userType = userRecord.get("userType");
+            String userType = userRecord.get("type");
+            int Type= Integer.parseInt(userType);
             // Assuming userType is stored as an integer where 0 corresponds to normalUser and 1 corresponds to managerUser
-            if (Integer.parseInt(userType) == type) {
-                switch (type) {
-                    case 0:
-                        normalUserFactory normalUserFactory = new normalUserFactory();
-                        user normalUser = normalUserFactory.createUser(uid, username, password,bidWant);
-                        usersList.add(normalUser);
-                        break;
-                    case 1:
-                        managerUserFactory managerUserFactory = new managerUserFactory();
-                        user managerUser = managerUserFactory.createUser(uid, username, password,bidWant);
-                        usersList.add(managerUser);
-                        break;
-                }
+            
+            switch (Type) {
+                case 0:
+                    normalUserFactory normalUserFactory = new normalUserFactory();
+                    user normalUser = normalUserFactory.createUser(uid, username, password,bidWant);
+                    usersList.add(normalUser);
+                    break;
+                case 1:
+                    managerUserFactory managerUserFactory = new managerUserFactory();
+                    user managerUser = managerUserFactory.createUser(uid, username, password,bidWant);
+                    usersList.add(managerUser);
+                    break;
             }
+            
         }
         return usersList;
     }
