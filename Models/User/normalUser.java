@@ -232,6 +232,43 @@ public class normalUser implements user{
         return amount;
     }
 
+    public int subscribe(int bid){
+        dbSingleton dbConnector = dbSingleton.getInstance();
+        List<Map<String, String>> bookRecordList = dbConnector.preciseSearch("books", "bid", String.valueOf(bid));
+        if (bookRecordList.size() == 0){
+            // no such book in the database
+            return -1;
+        }
+
+        Map<String, String> bookRecord = bookRecordList.get(0);
+        int quantityAvailable = Integer.parseInt(bookRecord.get("quantity_available"));
+        if (quantityAvailable > 0){
+            // book wanted is available, no need to subscribe
+            return 0;
+        }
+
+        String bidString = this.getBidWant();
+        List<Map<String, String>> updatedUserRecordList = new ArrayList<>();
+        Map<String, String> updatedUserRecord = new HashMap<>();
+        updatedUserRecord.put("uid", String.valueOf(this.getUid()));
+        updatedUserRecord.put("username", this.getUsername());
+        updatedUserRecord.put("password", this.getPassword());
+        updatedUserRecord.put("type", String.valueOf(this.getType()));
+
+        if (bidString.equals("none")){
+            bidString = String.valueOf(bid);
+        }
+        else{
+            bidString += "-" + String.valueOf(bid);
+        }
+
+        updatedUserRecord.put("bid_want", bidString);
+        updatedUserRecordList.add(updatedUserRecord);
+        dbConnector.update("users", "uid", String.valueOf(this.getUid()), updatedUserRecordList);
+
+        return 1;
+    }
+
     private Map<String, String> getBookCopyRecord(dbSingleton dbConnector, int cid) {
         List<Map<String, String>> bookcopyList = dbConnector.preciseSearch("book_copies", "cid", String.valueOf(cid));
         return bookcopyList.size() == 1 ? bookcopyList.get(0) : null;

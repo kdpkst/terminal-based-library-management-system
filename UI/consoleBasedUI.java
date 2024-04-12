@@ -1,8 +1,10 @@
 package UI;
 
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 import DatabaseConnection.dbSingleton;
@@ -53,8 +55,9 @@ public class consoleBasedUI {
         System.out.println("3.Search Book");
         System.out.println("4.Borrow Book");
         System.out.println("5.Return Book");
-        System.out.println("6.Back to Home (logout)");
-        System.out.println("7.Exit");
+        System.out.println("6.Subscribe Book Wanted");
+        System.out.println("7.Back to Home (logout)");
+        System.out.println("8.Exit");
 
         System.out.print("Choose an option: ");
         int option = getIntInput();
@@ -75,14 +78,17 @@ public class consoleBasedUI {
                 returnBook(user);
                 break;
             case 6:
+                subscribeBook(user);
+                break;
+            case 7:
                 home();
                 break;               
-            case 7:
+            case 8:
                 dbSingleton.saveCacheData("./Database/Cache/last_id_map.cache");
                 System.exit(0);
                 break;
             default:
-                System.out.println("Invalid option, re-enter number between 1 to 5: ");
+                System.out.println("Invalid option, re-enter number between 1 to 8");
                 break;
         }
 
@@ -286,7 +292,7 @@ public class consoleBasedUI {
                 System.exit(0);
                 break;                               
             default:
-                System.out.println("Invalid option, re-enter number between 1 to 5: ");
+                System.out.println("Invalid option, re-enter number between 1 to 8");
                 break;
         }
         managerInterface(user);
@@ -330,6 +336,7 @@ public class consoleBasedUI {
         int loginResultmanagerUser = managerUser.login(username, password);
 
         if(loginResultNormalUser == 1){
+            subscriptionNotifier(normalUser);
             normalUserInterface(normalUser);
         }
 
@@ -341,6 +348,8 @@ public class consoleBasedUI {
             System.out.println();
             System.out.println("Login failed, please register or login again !");
         }
+
+       
     }
 
     private void register(){
@@ -494,6 +503,57 @@ public class consoleBasedUI {
         }
     }
 
+    private void subscribeBook(normalUser user){
+        System.out.println();
+        System.out.print("Please enter the BID of the book you want to subscribe: ");
+        int inputBid = Integer.parseInt(getStringInput());
+        int subscribeResult = user.subscribe(inputBid);
+        switch (subscribeResult) {
+            case 1:
+                System.out.println("Successfully subscribed this book!");
+                break;
+            case 0:
+                System.out.println("This book is currently available, you can borrow it!");
+                break;
+            case -1:
+                System.out.println("This book does not exist!");
+                break;
+        }
+    }
+
+    private void subscriptionNotifier(normalUser user){
+        dbSingleton dbConnctor = dbSingleton.getInstance();
+        String bidWantString = user.getBidWant();
+        String[] bidWantArray = bidWantString.split("-");
+        List<String> temp = new ArrayList<>();
+
+        if (!bidWantString.equals("none")){
+           
+            for (int i = 0; i < bidWantArray.length; i++){
+                List<Map<String, String>> booksRecordList = dbConnctor.preciseSearch("books", "bid", bidWantArray[i]);
+                if (booksRecordList.size() == 1){
+                    Map<String, String> bookRecord = booksRecordList.get(0);
+                    if (Integer.parseInt(bookRecord.get("quantity_available")) > 0){
+                        temp.add(bidWantArray[i]);
+                    }
+                }
+            }
+            
+            if (temp.size() > 0){
+                System.out.println();
+                System.out.println("-----------Subscription Notifcation------------");
+                System.out.print("!!!Book(s) with ID ");
+                for (int j = 0; j < temp.size(); j++) {
+                    System.out.print(bidWantArray[j] + " ");
+                }
+                System.out.print("is(are) available right now!!!");
+                System.out.println();
+                System.out.println("-----------Subscription Notifcation------------");
+                System.out.println();
+            }
+
+        }
+    }
 
 }
 
