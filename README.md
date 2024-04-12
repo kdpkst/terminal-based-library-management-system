@@ -41,7 +41,7 @@ table 4: **transactions**
 > primary key: tid
 
 table 5: **fines** 
-| fid | cid | amount | fine_date |
-|:---:|:---:|:------:|:---------:|
+| fid | uid | amount | status |
+|:---:|:---:|:------:|:------:|
 > insert a record of fine when a user return an overdue book
 > primary key: fid
