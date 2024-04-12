@@ -16,9 +16,9 @@ public class consoleBasedUI {
 
     public void home(){
         System.out.println("\n---Home---");
-        System.out.println("1. Login");
-        System.out.println("2. Register");
-        System.out.println("3. Exit");
+        System.out.println("1.Login");
+        System.out.println("2.Register");
+        System.out.println("3.Exit");
 
         System.out.print("Choose an option(please enter a number): ");
         int option = getIntInput();
@@ -47,13 +47,13 @@ public class consoleBasedUI {
     public void normalUserInterface(normalUser user){
         System.out.println();
         System.out.println("---!Welcome to the Library!---");
-        System.out.println("1. List All Books");
-        System.out.println("List All Copies for A Book");
-        System.out.println("Search Book");
-        System.out.println("Borrow Book");
-        System.out.println("Return Book");
-        System.out.println("Back to Home");
-        System.out.println("Exit");
+        System.out.println("1.List All Books");
+        System.out.println("2.List All Copies for A Book");
+        System.out.println("3.Search Book");
+        System.out.println("4.Borrow Book");
+        System.out.println("5.Return Book");
+        System.out.println("6.Back to Home");
+        System.out.println("7.Exit");
 
         System.out.print("Choose an option: ");
         int option = getIntInput();
