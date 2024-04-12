@@ -335,7 +335,7 @@ public class normalUser implements user{
         if (daysOverdue> SEVEN_DAYS){
             fine f = new exceedingSevenDaysFine();
             exceedingSevenDaysFineDecorator esdfd = new exceedingSevenDaysFineDecorator(f, f.calculateFine(daysOverdue));
-            amount = esdfd.calculateFine(daysOverdue);
+            amount =  esdfd.calculateFine(daysOverdue);
             return amount;
         }
 

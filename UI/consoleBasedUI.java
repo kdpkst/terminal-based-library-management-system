@@ -348,12 +348,12 @@ public class consoleBasedUI {
     private void listAllCopiesForOneBook(normalUser user){
         System.out.println();
         System.out.println("Selected bid:");
-        int bid=getIntInput();
+        int bid = getIntInput();
         List<bookCopy> copies=user.viewAllCopiesforOneBook(bid);
         System.out.println();
-        if(copies.size()==0){
+        if(copies.size() == 0){
             System.out.println();
-            System.out.println("There's no matched copies in the System, please list all books and then enter vaild bid !");
+            System.out.println("There's no matched copies in the System, please list all books and then enter vaild bid!");
             return;
         }
         System.out.printf("%-5s %-5s %-10s%n", "CID", "BID", "Status");

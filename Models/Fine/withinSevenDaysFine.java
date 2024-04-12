@@ -12,6 +12,8 @@ public class withinSevenDaysFine implements fine{
 
     @Override
     public double calculateFine(int daysOverdue) {
+        
+        // setting the base fine per day if the overdue day is less or equal to 7
         double base = 2.0;
         return base;
     }

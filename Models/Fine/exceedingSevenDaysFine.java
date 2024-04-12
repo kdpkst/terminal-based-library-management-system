@@ -12,6 +12,7 @@ public class exceedingSevenDaysFine implements fine{
 
     @Override
     public double calculateFine(int daysOverdue) {
+        // setting the base fine per day if the overdue days is greater than 7
         double base = 4.0;
         return base;
     }

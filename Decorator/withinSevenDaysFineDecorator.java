@@ -10,6 +10,7 @@ public class withinSevenDaysFineDecorator extends fineDecorator {
 
     @Override
     public double calculateFine(int daysOverdue) {
-        return baseFinePerDay * daysOverdue;
+        // set this is a flexible schedule for the user
+        return 0;
     }
 }
