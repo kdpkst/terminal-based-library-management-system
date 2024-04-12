@@ -13,7 +13,7 @@ public class SearchByAuthor implements SearchStrategy {
     @Override
     public List<book> search(String authorName){
         dbSingleton dbConnector = dbSingleton.getInstance();
-        List<Map<String, String>> SearchResult = dbConnector.fuzzySearch("books", "title", authorName);
+        List<Map<String, String>> SearchResult = dbConnector.fuzzySearch("books", "author", authorName);
 
         List<book> booksList = new ArrayList<>();
         for (int i = 0; i < SearchResult.size(); i++){

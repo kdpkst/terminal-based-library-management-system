@@ -10,7 +10,7 @@ public class normalUserTesting {
         dbSingleton.initializeLastIdMap("./Database/Cache/last_id_map.cache");
         managerUser user=new managerUser();
         // user.removeBook(2);
-        user.addBook("A", "B", "science");
-    }
-    
+        // user.addBook("A", "B", "science");
+        System.out.println(user.searchBooks("author", "iii"));
+    }   
 }

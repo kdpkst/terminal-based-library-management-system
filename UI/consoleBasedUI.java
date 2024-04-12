@@ -89,6 +89,155 @@ public class consoleBasedUI {
         normalUserInterface(user);
     }
 
+    private void displayAllBooks(managerUser user) {
+        List<book> books = user.viewAllBooks();  
+        if (books.size() == 0) {
+            System.out.println("\nThere's no book in the system, please add a book first!");
+            return;
+        }
+        System.err.println();
+        System.out.printf("%-10s %-30s %-20s %-15s %-10s%n", "Book ID", "Title", "Author", "Genre", "Quantity Available");
+        for (book book : books) {
+            System.out.printf("%-10d %-30s %-20s %-15s %-10d%n", 
+                              book.getBid(), 
+                              book.getTitle(), 
+                              book.getAuthor(), 
+                              book.getGenre(), 
+                              book.getQuantityAvailable());
+        }
+        System.err.println();
+    }
+
+    private void displayBookCopies(managerUser user, int bid) {
+        System.out.println("Selected bid: " + bid);
+        List<bookCopy> copies = user.viewAllCopiesforOneBook(bid);
+        System.out.println();
+        if (copies.isEmpty()) {
+            System.out.println("There's no matched copies in the System, please list all books and then enter valid bid!");
+            return;
+        }
+        System.out.printf("%-5s %-5s %-10s%n", "CID", "BID", "Status");
+        for (bookCopy copy : copies) {
+            System.out.printf("%-5d %-5d %-10d%n", copy.getCid(), copy.getBid(), copy.getStatus());
+        }
+        System.out.println();
+    }
+    
+
+    private void searchAndDisplayBooks(managerUser user) {
+        System.out.println("Search fields:");
+        List<String> validInputs = Arrays.asList("title", "author", "genre");
+        String key;
+    
+        
+        while (true) {
+            System.out.println("Search value (title, author, genre):");
+            key = getStringInput();
+            if (validInputs.contains(key)) {
+                break;
+            } else {
+                System.out.println("Invalid input. Please enter one of the following values: title, author, genre");
+            }
+        }
+    
+        
+        System.out.println("Search value:");
+        String value = getStringInput();
+    
+        
+        List<book> searchedBooks = user.searchBooks(key, value);
+        if (searchedBooks.isEmpty()) {
+            System.out.println("\nThere's no matched book in the system !");
+            return;
+        }
+    
+        
+        System.err.println();
+        System.out.printf("%-10s %-30s %-20s %-15s %-10s%n", "Book ID", "Title", "Author", "Genre", "Quantity Available");
+        for (book book : searchedBooks) {
+            System.out.printf("%-10d %-30s %-20s %-15s %-10d%n", 
+                              book.getBid(), 
+                              book.getTitle(), 
+                              book.getAuthor(), 
+                              book.getGenre(), 
+                              book.getQuantityAvailable());
+        }
+        System.err.println();
+    }
+
+    private void addNewBook(managerUser user) {
+        System.out.println("Please enter the title of the book you want to add:");
+        String title = getStringInput();
+        System.out.println("Please enter the author of the book you want to add:");
+        String author = getStringInput();
+    
+        System.out.println("Enter the genre (science, business, novel, history):");
+        String input = getStringInput();  
+        String genre;
+    
+       
+        switch (input.toLowerCase()) {
+            case "science":
+                genre = "science";
+                break;
+            case "business":
+                genre = "business";
+                break;
+            case "novel":
+                genre = "novel";
+                break;
+            case "history":
+                genre = "history";
+                break;
+            default:
+                System.out.println("Invalid genre entered. Setting default to 'novel'.");
+                genre = "novel";  
+                break;
+        }
+    
+        
+        Boolean outcome = user.addBook(title, author, genre);
+        if (outcome) {
+            System.out.println("Book added successfully!");
+        } else {
+            System.out.println("Failed to add book, please try again!");
+        }
+    }
+
+
+    private void removeBookCopy(managerUser user) {
+        System.out.println("Enter the CID of the book copy to remove:");
+        try {
+            int cid = Integer.parseInt(getStringInput());  // This method reads input from the user and converts it to integer
+            boolean result = user.removeBook(cid);
+            if (result) {
+                System.out.println("Book copy removed successfully.");
+            } else {
+                System.out.println("Failed to remove book copy.");
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input. Please enter a valid integer.");
+        }
+    }
+
+    private void displayAllUsers(managerUser userManager) {
+        List<user> users = userManager.viewAllUsers();
+        System.out.println();
+        System.out.printf("%-5s %-15s %-15s %-5s %-10s%n", "UID", "Username", "Password", "Type", "Bid Want");
+    
+        for (user userViewed : users) {
+            System.out.printf("%-5d %-15s %-15s %-5d %-10s%n",
+                              userViewed.getUid(), 
+                              userViewed.getUsername(), 
+                              userViewed.getPassword(), 
+                              userViewed.getType(), 
+                              userViewed.getBidWant());
+        }
+    }
+    
+    
+    
+
     public void managerInterface(managerUser user){
         System.out.println();
         System.out.println("---Manager System---");
@@ -105,136 +254,30 @@ public class consoleBasedUI {
         int option = getIntInput();
         switch (option) {
             case 1:
-                List<book> books=user.viewAllBooks();
-                if(books.size()==0){
-                    System.out.println();
-                    System.out.println("There's no book in the system, please add a book first!");
-                    break;
-                }
-                System.err.println();
-                System.out.printf("%-10s %-30s %-20s %-15s %-10s%n", "Book ID", "Title", "Author", "Genre", "Quantity Available");
-
-                for (book book : books) {
-                    
-                    System.out.printf("%-10d %-30s %-20s %-15s %-10d%n", 
-                                      book.getBid(), 
-                                      book.getTitle(), 
-                                      book.getAuthor(), 
-                                      book.getGenre(), 
-                                      book.getQuantityAvailable());
-                }
-                System.err.println();
+                displayAllBooks(user);
                 break;
 
             case 2:
-                System.out.println();
-                System.out.println("Selected bid:");
-                int bid=getIntInput();
-                List<bookCopy> copies=user.viewAllCopiesforOneBook(bid);
-                System.out.println();
-                if(copies.size()==0){
-                    System.out.println();
-                    System.out.println("There's no matched copies in the System, please list all books and then enter vaild bid !");
-                    break;
-                }
-                System.out.printf("%-5s %-5s %-10s%n", "CID", "BID", "Status");
-
-                
-                for (bookCopy copy : copies) {
-                    int copy_cid = copy.getCid();
-                    int copy_bid = copy.getBid();
-                    int copy_status = copy.getStatus();
-
-                    System.out.printf("%-5d %-5d %-10d%n", copy_cid, copy_bid, copy_status);
-                }
-
-                System.out.println();
+                System.out.println("Enter the Book ID:");
+                int bid = getIntInput();  
+                displayBookCopies(user, bid);
                 break;
             case 3:
-                //while searching fiels not exists may have some error and exit the programme
-                System.out.println("Search fields:");
-                String key;
-                List<String> validInputs = Arrays.asList("science", "business", "novel", "history");
-
-                while (true) {
-                    System.out.println("Search value (title, ):");
-                    key = getStringInput();
-
-                    if (validInputs.contains(key)) {
-                        break;
-                    } else {
-                        System.out.println("Invalid input. Please enter one of the following values: science, business, novel, history");
-                    }
-                }
-                System.out.println("Search value:");
-                String value=getStringInput();
-                List<book> searchedbooks=user.searchBooks(key, value);
-                if(searchedbooks.size()==0){
-                    System.out.println();
-                    System.out.println("There's no matched book in the system !");
-                    break;
-                }
-
-                System.err.println();
-                System.out.printf("%-10s %-30s %-20s %-15s %-10s%n", "Book ID", "Title", "Author", "Genre", "Quantity Available");
-
-                for (book book : searchedbooks) {
-                    
-                    System.out.printf("%-10d %-30s %-20s %-15s %-10d%n", 
-                                      book.getBid(), 
-                                      book.getTitle(), 
-                                      book.getAuthor(), 
-                                      book.getGenre(), 
-                                      book.getQuantityAvailable());
-                }
-                System.err.println();
+                searchAndDisplayBooks(user); 
                 break;
 
             case 4:
-               //there exists some problems in case4
-                System.out.println("title::");
-                String title=getStringInput();
-                System.out.println("author");
-                String author=getStringInput();
-                System.out.println("genre");
-                String genre=getStringInput();
-                Boolean outcome= user.addBook(title, author, genre);
-                if(outcome){
-                    System.out.println("Add book successfully !");
-                    break;
-                }
-
-                else{
-                    System.out.println("Failed to add books, please try again !");
-                    break;
-                }
+                addNewBook(user); 
+                break;
                 
             case 5:
-                //there exists some problems in case 5
-                System.out.println("Selected cid:");
-                String cid=getStringInput();
-                int numcid = Integer.parseInt(cid);
-                user.removeBook(numcid);
+                removeBookCopy(user);  
                 break;
                 
             case 6:
-
-                List<user> users=user.viewAllUsers();
-                System.out.println();
-
-                System.out.printf("%-5s %-15s %-15s %-5s %-10s%n", "UID", "Username", "Password", "Type", "Bid Want");
-
-                for (user userViewed : users) {
-
-                    System.out.printf("%-5d %-15s %-15s %-5d %-10s%n", 
-                                    userViewed.getUid(), 
-                                    userViewed.getUsername(), 
-                                    userViewed.getPassword(), 
-                                    userViewed.getType(), 
-                                    userViewed.getBidWant());
-                     }
-
+                displayAllUsers(user);  // Call the new method to handle displaying all users
                 break;
+
             case 7:
                 home();
                 break;  
