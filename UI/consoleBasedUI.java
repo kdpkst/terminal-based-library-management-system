@@ -194,11 +194,14 @@ public class consoleBasedUI {
 
         switch (registerResult) {
             case 1:
+                // print some prompts message
                 normalUserInterface(normalUser);    
                 break;
             case 0:
-                break;
+                dbSingleton.saveCacheData("./Database/Cache/last_id_map.cache");
+                System.exit(0);
             case -1:
+                // print some prompts message
                 register();
                 break;
         }
