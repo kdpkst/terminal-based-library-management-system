@@ -1,5 +1,5 @@
 package Decorator;
 
-public interface FineCalculator {
+public interface fine {
     double calculateFine(int daysOverdue);
 }

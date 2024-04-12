@@ -10,10 +10,13 @@ import java.util.Map;
 import DatabaseConnection.dbSingleton;
 import Models.Book.book;
 import Models.BookCopy.bookCopy;
+import Models.Fine.exceedingSevenDaysFine;
+import Models.Fine.withinSevenDaysFine;
 import Strategy.SearchByAuthor;
 import Strategy.SearchByGenre;
 import Strategy.SearchByTitle;
 import Factory.BookFactory.*;
+import Decorator.*;
 
 public class normalUser implements user{
     
@@ -206,14 +209,14 @@ public class normalUser implements user{
         return 1;
     }
 
-    public boolean returnBook(int cid){
+    public double returnBook(int cid){
         dbSingleton dbConnector = dbSingleton.getInstance();
         
         // Find incomplete transaction for the given cid and current user
         Map<String, String> incompleteTransaction = findIncompleteTransaction(dbConnector, cid, String.valueOf(this.getUid()));
         if (incompleteTransaction == null) {
             // No incomplete transaction found for the given cid and current user
-            return false;
+            return -1;
         }
         
         // Update incomplete transaction status to "completed" and get transaction time
@@ -223,9 +226,10 @@ public class normalUser implements user{
         updateBookCopyAndBook(dbConnector, cid);
         
         // Calculate fine if the book is overdue
-        calculateFine(transactionDate);
-        
-        return true;
+        double amount = calculateFine(transactionDate);
+        insertFine(dbConnector, this.getUid(), amount);
+
+        return amount;
     }
 
     private Map<String, String> getBookCopyRecord(dbSingleton dbConnector, int cid) {
@@ -315,16 +319,42 @@ public class normalUser implements user{
         }
     }
     
-    private void calculateFine(LocalDate transactionDate) {
+    private double calculateFine(LocalDate transactionDate) {
+        double amount = 0;
+        int overdueDays = 30;
+        int SEVEN_DAYS = 7;
         LocalDate now = LocalDate.now();
         long daysBetween = java.time.temporal.ChronoUnit.DAYS.between(transactionDate, now);
-        if (daysBetween > 30) {
-            // Calculate and assign $5 fine
-            // Example: Assuming there's a method to assign fine to the user
-            // assignFineToUser(5);
+        int daysOverdue = (int) daysBetween - overdueDays;
+        if (daysOverdue <= SEVEN_DAYS && daysOverdue > 0) {
+            fine f = new withinSevenDaysFine();
+            withinSevenDaysFineDecorator wsdfd = new withinSevenDaysFineDecorator(f, f.calculateFine(daysOverdue));
+            amount = wsdfd.calculateFine(daysOverdue);
+            return amount;
         }
+        if (daysOverdue> SEVEN_DAYS){
+            fine f = new exceedingSevenDaysFine();
+            exceedingSevenDaysFineDecorator esdfd = new exceedingSevenDaysFineDecorator(f, f.calculateFine(daysOverdue));
+            amount = esdfd.calculateFine(daysOverdue);
+            return amount;
+        }
+
+        return amount;
     }
 
+    private void insertFine(dbSingleton dbConnector, int uid, double amount) {
+        if (amount > 0.0){
+            List<Map<String, String>> data = new ArrayList<>();
+            Map<String, String> fineRecord = new HashMap<>();
+            fineRecord.put("uid", String.valueOf(uid));
+            fineRecord.put("amount", String.valueOf(amount));
+            fineRecord.put("status", "incomplete");
+            data.add(fineRecord);
+        
+            dbConnector.insert("fines", data);
+        }
+
+    }
     
     public int getUid() {
         return uid;

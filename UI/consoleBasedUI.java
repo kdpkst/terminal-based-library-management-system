@@ -107,7 +107,7 @@ public class consoleBasedUI {
                 List<book> books=user.viewAllBooks();
                 if(books.size()==0){
                     System.out.println();
-                    System.out.println("There's no book in the system, please add a book first !");
+                    System.out.println("There's no book in the system, please add a book first!");
                     break;
                 }
                 System.err.println();
@@ -282,7 +282,8 @@ public class consoleBasedUI {
 
         else{
             System.out.println();
-            System.out.println("Login failed, please register or login again !");}
+            System.out.println("Login failed, please register or login again !");
+        }
     }
 
     private void register(){
@@ -420,12 +421,15 @@ public class consoleBasedUI {
         System.out.print("Please enter the CID of the book for return: ");
         int inputCid = Integer.parseInt(getStringInput());
         try{
-            boolean returnResult = user.returnBook(inputCid);
-            if (returnResult){
+            double amount = user.returnBook(inputCid);
+            if (amount < 0.0){
+                System.out.println("Please check the correctness of your input CID");
+            }
+            if (amount == 0.0){
                 System.out.println("Book has successfully returned!");
             }
-            else{
-                System.out.println("Please check the correctness of your input CID");
+            if (amount > 0.0) {
+                System.out.println("Overdue Book Return! You are fined $" + amount);
             }
         }
         catch (Exception e) {

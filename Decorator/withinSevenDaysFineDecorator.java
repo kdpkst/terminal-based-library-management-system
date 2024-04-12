@@ -1,9 +1,10 @@
 package Decorator;
 
-public class FineWithinSevenDays implements FineCalculator {
+public class withinSevenDaysFineDecorator extends fineDecorator {
     private double baseFinePerDay;
 
-    public FineWithinSevenDays(double baseFinePerDay) {
+    public withinSevenDaysFineDecorator(fine f, double baseFinePerDay) {
+        super(f);
         this.baseFinePerDay = baseFinePerDay;
     }
 

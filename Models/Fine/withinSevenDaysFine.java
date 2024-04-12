@@ -2,13 +2,19 @@ package Models.Fine;
 
 import java.time.LocalDate;
 
-public class fine {
-    
+import Decorator.fine;
+
+public class withinSevenDaysFine implements fine{
     private int fid;
     private int cid;
     private double amount;	
     private LocalDate fineDate;
 
+    @Override
+    public double calculateFine(int daysOverdue) {
+        double base = 2.0;
+        return base;
+    }
 
     public int getFid() {
         return fid;
@@ -34,4 +40,5 @@ public class fine {
     public void setFineDate(LocalDate fineDate) {
         this.fineDate = fineDate;
     }
+
 }
