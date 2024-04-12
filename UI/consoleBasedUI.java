@@ -47,7 +47,7 @@ public class consoleBasedUI {
     public void normalUserInterface(normalUser user){
         System.out.println();
         System.out.println("---!Welcome to the Library!---");
-        System.out.println("List All Books");
+        System.out.println("1. List All Books");
         System.out.println("List All Copies for A Book");
         System.out.println("Search Book");
         System.out.println("Borrow Book");
@@ -97,10 +97,8 @@ public class consoleBasedUI {
         System.out.println("4.Add Book");
         System.out.println("5.Remove Book");
         System.out.println("6.List All Users");
-        System.out.println("7.Search User");
-        System.out.println("8.Back to Home");
-        System.out.println("9.Exit");
-        System.out.println();
+        System.out.println("7.Back to Home");
+        System.out.println("8.Exit");
 
         System.out.print("Choose an option(please enter a number): ");
         int option = getIntInput();
@@ -211,10 +209,8 @@ public class consoleBasedUI {
                 List<user> users=user.viewAllUsers();
                 System.out.println();
 
-
                 System.out.printf("%-5s %-15s %-15s %-5s %-10s%n", "UID", "Username", "Password", "Type", "Bid Want");
 
-                
                 for (user userViewed : users) {
 
                     System.out.printf("%-5d %-15s %-15s %-5d %-10s%n", 
@@ -226,22 +222,17 @@ public class consoleBasedUI {
                      }
 
                 break;
-
             case 7:
                 
                 break;  
             case 8:
-                
-                break;                                 
-            case 9:
                 dbSingleton.saveCacheData("./Database/Cache/last_id_map.cache");
                 System.exit(0);
-                break;
+                break;                               
             default:
                 System.out.println("Invalid option, re-enter number between 1 to 5: ");
                 break;
         }
-
         managerInterface(user);
     }
 
