@@ -52,29 +52,29 @@ public class consoleBasedUI {
         System.out.println("3.Search Book");
         System.out.println("4.Borrow Book");
         System.out.println("5.Return Book");
-        System.out.println("6.Back to Home");
+        System.out.println("6.Back to Home (logout)");
         System.out.println("7.Exit");
 
         System.out.print("Choose an option: ");
         int option = getIntInput();
         switch (option) {
             case 1:
-                
+                listAllBook(user);
                 break;
             case 2:
-                
+                listAllCopiesForOneBook(user);
                 break;
             case 3:
-                
+                searchBooks(user);
                 break;
             case 4:
-                
+                borrowBook(user);
                 break;
             case 5:
-                
+                returnBook(user);
                 break;
             case 6:
-                
+                home();
                 break;               
             case 7:
                 dbSingleton.saveCacheData("./Database/Cache/last_id_map.cache");
@@ -97,14 +97,13 @@ public class consoleBasedUI {
         System.out.println("4.Add Book");
         System.out.println("5.Remove Book");
         System.out.println("6.List All Users");
-        System.out.println("7.Back to Home");
+        System.out.println("7.Back to Home (logout)");
         System.out.println("8.Exit");
 
         System.out.print("Choose an option(please enter a number): ");
         int option = getIntInput();
         switch (option) {
             case 1:
-
                 List<book> books=user.viewAllBooks();
                 if(books.size()==0){
                     System.out.println();
@@ -223,7 +222,7 @@ public class consoleBasedUI {
 
                 break;
             case 7:
-                
+                home();
                 break;  
             case 8:
                 dbSingleton.saveCacheData("./Database/Cache/last_id_map.cache");
@@ -284,7 +283,6 @@ public class consoleBasedUI {
         else{
             System.out.println();
             System.out.println("Login failed, please register or login again !");}
-
     }
 
     private void register(){
@@ -301,16 +299,137 @@ public class consoleBasedUI {
 
         switch (registerResult) {
             case 1:
-                // print some prompts message
+                System.out.println("Successfully registered!");
+                System.out.println("The system has helped you automatically login!");
                 normalUserInterface(normalUser);    
                 break;
             case 0:
+                System.out.println("Unknown I/O error occurred!");
                 dbSingleton.saveCacheData("./Database/Cache/last_id_map.cache");
                 System.exit(0);
             case -1:
-                // print some prompts message
+                System.out.println("Duplicate username, please change a username!");
                 register();
                 break;
+        }
+    }
+
+    // Shuchen Yuan 4.12
+    // if the user want to see all the books 
+    private void listAllBook(normalUser user){
+        // test if the user is null
+        if (user == null) {
+            System.out.println("The user is null");
+        }
+        List<book> books= user.viewAllBooks();
+        if(books.size()==0){
+            System.out.println();
+            System.out.println("There's no book in the system, please add a book first !");
+            return; // stop running the following codes
+        }
+        
+        System.err.println();
+        System.out.printf("%-10s %-30s %-20s %-15s %-10s%n", "Book ID", "Title", "Author", "Genre", "Quantity Available");
+
+        for (book book : books) {
+            
+            System.out.printf("%-10d %-30s %-20s %-15s %-10d%n", 
+                              book.getBid(), 
+                              book.getTitle(), 
+                              book.getAuthor(), 
+                              book.getGenre(), 
+                              book.getQuantityAvailable());
+        }
+        System.err.println();
+        return;
+    }
+
+    private void listAllCopiesForOneBook(normalUser user){
+        System.out.println();
+        System.out.println("Selected bid:");
+        int bid=getIntInput();
+        List<bookCopy> copies=user.viewAllCopiesforOneBook(bid);
+        System.out.println();
+        if(copies.size()==0){
+            System.out.println();
+            System.out.println("There's no matched copies in the System, please list all books and then enter vaild bid !");
+            return;
+        }
+        System.out.printf("%-5s %-5s %-10s%n", "CID", "BID", "Status");
+
+        for (bookCopy copy : copies) {
+            int copy_cid = copy.getCid();
+            int copy_bid = copy.getBid();
+            int copy_status = copy.getStatus();
+
+            System.out.printf("%-5d %-5d %-10d%n", copy_cid, copy_bid, copy_status);
+        }
+        System.out.println();
+        return;
+    }
+
+    private void searchBooks(normalUser user){
+        //while searching fiels not exists may have some error and exit the programme
+        System.out.println("Search fields:");
+        String fields=getStringInput();
+        System.out.println("Search value:");
+        String value=getStringInput();
+        List<book> searchedbooks=user.searchBooks(fields, value);
+        if(searchedbooks.size()==0){
+            System.out.println();
+            System.out.println("There's no matched book in the system !");
+            return;
+        }
+
+        System.err.println();
+        System.out.printf("%-10s %-30s %-20s %-15s %-10s%n", "Book ID", "Title", "Author", "Genre", "Quantity Available");
+
+        for (book book : searchedbooks) {
+            
+            System.out.printf("%-10d %-30s %-20s %-15s %-10d%n", 
+                                book.getBid(), 
+                                book.getTitle(), 
+                                book.getAuthor(), 
+                                book.getGenre(), 
+                                book.getQuantityAvailable());
+        }
+        System.err.println();
+        return;
+    }
+
+    private void borrowBook(normalUser user){
+        System.out.println();
+        System.out.print("Please enter the CID of the book you want to borrow: ");
+        int inputCid = Integer.parseInt(getStringInput());
+        int borrowResult = user.borrowBook(inputCid);
+        switch (borrowResult) {
+            case 1:
+                System.out.println("Successfully borrowed this book (Please return it in time) !");
+                break;
+            case 0:
+                System.out.println("Input CID does not exist!");
+                break;
+            case -1:
+                System.out.println("Current book copy has been borrowed!");
+                break;
+        }
+    }
+
+    private void returnBook(normalUser user){
+        System.out.println();
+        System.out.print("Please enter the CID of the book for return: ");
+        int inputCid = Integer.parseInt(getStringInput());
+        try{
+            boolean returnResult = user.returnBook(inputCid);
+            if (returnResult){
+                System.out.println("Book has successfully returned!");
+            }
+            else{
+                System.out.println("Please check the correctness of your input CID");
+            }
+        }
+        catch (Exception e) {
+            System.out.println("Unknown error occurred!");
         }
     }
 

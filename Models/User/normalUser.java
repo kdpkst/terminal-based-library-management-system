@@ -177,26 +177,33 @@ public class normalUser implements user{
         }
     }
 
-    public boolean borrowBook(int cid) {
+    /**
+      * @param cid The customer ID of the borrower.
+      * @return An integer representing the result of the borrowing operation:
+      *         1 if the book was successfully borrowed
+      *         0 if the book copy ID does not exist
+      *         -1 if the book copy is unavailable
+      */
+    public int borrowBook(int cid) {
         dbSingleton dbConnector = dbSingleton.getInstance();
         Map<String, String> bookCopyRecord = getBookCopyRecord(dbConnector, cid);
         if (bookCopyRecord == null) {
             // cid does not exist
-            return false;
+            return 0;
         }
         if (!isBookAvailable(bookCopyRecord)) {
             // book copy unavailable
-            return false;
+            return -1;
         }
 
-        updateBookCopyStatus(dbConnector, cid, "0");
+        updateBookCopyStatus(dbConnector, bookCopyRecord, cid, "0");
 
         int bid = Integer.parseInt(bookCopyRecord.get("bid"));
         updateQuantityAvailable(dbConnector, bid, -1);
 
         insertTransactionRecord(dbConnector, cid, "borrow", "incomplete");
 
-        return true;
+        return 1;
     }
 
     public boolean returnBook(int cid){
@@ -231,8 +238,7 @@ public class normalUser implements user{
         return status == 1;
     }
 
-    private void updateBookCopyStatus(dbSingleton dbConnector, int cid, String status) {
-        Map<String, String> bookCopyRecord = new HashMap<>();
+    private void updateBookCopyStatus(dbSingleton dbConnector, Map<String, String> bookCopyRecord, int cid, String status) {
         bookCopyRecord.put("status", status);
         List<Map<String, String>> updatedbookcopyList = new ArrayList<>();
         updatedbookcopyList.add(bookCopyRecord);
@@ -319,7 +325,7 @@ public class normalUser implements user{
         }
     }
 
-
+    
     public int getUid() {
         return uid;
     }
