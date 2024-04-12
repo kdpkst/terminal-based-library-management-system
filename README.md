@@ -19,29 +19,31 @@ pattern** to notify users when a book they want becomes available; …)
 table 1: **users**     
 | uid | username | password | type | bid_want |
 |:---:|:--------:|:--------:|:----:|:--------:|
-> **type**: manager or normal user
-> **bid_want**: record a list of unavailable books the user wants. Otherwise leave it empty  
-> primary key: uid; username should be unique
+> **type**: manager or normal user  
+> **bid_want**: record a list of unavailable books the user wants. Otherwise leave it empty   
+> **primary key**: uid; username should be unique
 
 table 2: **books**
 | bid | title | author | genre | quantity_available |
 |:---:|:-----:|:------:|:-----:|:------------------:|
-> primary key: bid; (title, author) should be unique
+> Note that (title, author) should be unique  
+> **primary key**: bid
 
 table 3: **book_copies** 
 | cid | bid | status |
 |:---:|:---:|:------:|
-> **status**: available or not
-> primary key: cid
+> **status**: available or not  
+> **primary key**: cid
 
 table 4: **transactions**
 | tid | uid | cid | transaction_date | status |
 |:---:|:---:|:---:|:----------------:|:------:|
-> **status**: completed or incompleted
-> primary key: tid
+> **status**: completed or incompleted  
+> **primary key**: tid
 
 table 5: **fines** 
-| fid | cid | amount | fine_date |
-|:---:|:---:|:------:|:---------:|
-> insert a record of fine when a user return an overdue book
-> primary key: fid
+| fid | uid | amount | status |
+|:---:|:---:|:------:|:------:|
+> insert a record of fine when a user return an overdue book  
+> **status**: the fine is complete or incomplete  
+> **primary key**: fid
