@@ -8,5 +8,4 @@ public class libraryManagementSystem {
         consoleBasedUI ui = new consoleBasedUI();
         ui.home();
     }
-    
 }

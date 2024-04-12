@@ -46,11 +46,11 @@ public class dbSingletonTesting {
 
         List<Map<String, String>> data = new ArrayList<Map<String,String>>();
         Map<String, String> map4 = new HashMap<>();
-        map4.put("cid", "09");
         map4.put("status", "cyz is dalao");
+        map4.put("cid", "09");
         map4.put("bid", "39");
         data.add(map4);
-        dbConnector.update("book_copies", "status", "1", data);
+        dbConnector.update("book_copies", "status", "cyz", data);
 
     }
 }

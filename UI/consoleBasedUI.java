@@ -1,6 +1,7 @@
 package UI;
 
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
@@ -155,10 +156,22 @@ public class consoleBasedUI {
             case 3:
                 //while searching fiels not exists may have some error and exit the programme
                 System.out.println("Search fields:");
-                String fields=getStringInput();
+                String key;
+                List<String> validInputs = Arrays.asList("science", "business", "novel", "history");
+
+                while (true) {
+                    System.out.println("Search value (title, ):");
+                    key = getStringInput();
+
+                    if (validInputs.contains(key)) {
+                        break;
+                    } else {
+                        System.out.println("Invalid input. Please enter one of the following values: science, business, novel, history");
+                    }
+                }
                 System.out.println("Search value:");
                 String value=getStringInput();
-                List<book> searchedbooks=user.searchBooks(fields, value);
+                List<book> searchedbooks=user.searchBooks(key, value);
                 if(searchedbooks.size()==0){
                     System.out.println();
                     System.out.println("There's no matched book in the system !");
@@ -206,6 +219,7 @@ public class consoleBasedUI {
                 int numcid = Integer.parseInt(cid);
                 user.removeBook(numcid);
                 break;
+                
             case 6:
 
                 List<user> users=user.viewAllUsers();

@@ -137,87 +137,124 @@ public class managerUser implements user{
         return bookList;
     }
 
-    public boolean addBook(String title, String author, String genre){
-        dbSingleton dbConnctor = dbSingleton.getInstance();
-        List<Map<String,String>> bookRecords= dbConnctor.preciseSearch("books", "title", title);
-        
-        List<Map<String, String>> filteredBookRecords = new ArrayList<>();
-
-        for (Map<String, String> bookRecord : bookRecords) {
-            String authorFromRecord = bookRecord.get("author");
-            if (author.equals(authorFromRecord)) {
-                filteredBookRecords.add(bookRecord);
+    
+    public boolean addBook(String title, String author, String genre) {
+        dbSingleton dbConnector = dbSingleton.getInstance();
+    
+        // Step 1: Search for the book by title and author
+        List<Map<String, String>> existingBooks = dbConnector.preciseSearch("books", "title", title);
+        String bid = null;
+        boolean bookExists = false;
+    
+        for (Map<String, String> book : existingBooks) {
+            if (book.get("author").equals(author)) {
+                bid = book.get("bid");
+                bookExists = true;
+                break;
             }
         }
-
-
-        if(filteredBookRecords.size()==0){
-            int bid=dbConnctor.getNextId("books");
-            Map<String, String> bookInserted = new HashMap<String, String>();
-            bookInserted.put("bid", String.valueOf(bid));
-            bookInserted.put("title", title);
-            bookInserted.put("author", author);
-            bookInserted.put("genre", genre);
-            bookInserted.put("quantity_available", "0");
-            List<Map<String, String>> bookresult = new ArrayList<>();
-            bookresult.add(bookInserted);
-            Boolean bookInsertflag =dbConnctor.insert("books",bookresult);
-            if(!bookInsertflag){
-                return false;
+    
+        // Step 2: If the book does not exist, add it to the books table
+        if (!bookExists) {
+            int newBid = dbConnector.getNextId("books");
+            Map<String, String> newBook = new HashMap<>();
+            newBook.put("bid", String.valueOf(newBid));
+            newBook.put("title", title);
+            newBook.put("author", author);
+            newBook.put("genre", genre);
+            newBook.put("quantity_available", "1");  // Start with a quantity of 1
+            List<Map<String, String>> booksToAdd = new ArrayList<>();
+            booksToAdd.add(newBook);
+            boolean bookAdded = dbConnector.insert("books", booksToAdd);
+            if (!bookAdded) {
+                return false; // Failed to add the new book
             }
-            filteredBookRecords.add(bookInserted);
+            bid = String.valueOf(newBid); // Update bid for new book
+        } else {
+            // If the book exists, update the quantity available
+            List<Map<String, String>> booksToUpdate = dbConnector.preciseSearch("books", "bid", bid);
+            if (!booksToUpdate.isEmpty()) {
+                Map<String, String> bookToUpdate = booksToUpdate.get(0);
+                int currentQuantity = Integer.parseInt(bookToUpdate.get("quantity_available"));
+                bookToUpdate.put("quantity_available", String.valueOf(currentQuantity + 1));
+                List<Map<String, String>> updateList = new ArrayList<>();
+                updateList.add(bookToUpdate);
+                dbConnector.update("books", "bid", bid, updateList);
+            }
         }
-
-        String bidInsert=filteredBookRecords.get(0).get("bid");
-        String availableNumber=filteredBookRecords.get(0).get("quantity_available");
-        int updateAvailableNumber=Integer.parseInt(availableNumber)+1;
-        Map<String, String> updatedRecord=filteredBookRecords.get(0);
-        updatedRecord.put("quantity_available", String.valueOf(updateAvailableNumber));
-        List<Map<String, String>> updatedRecords=new ArrayList<>();
-        updatedRecords.add(updatedRecord);
-        dbConnctor.update("books", "bid", bidInsert, updatedRecords);
-
-        int cid=dbConnctor.getNextId("book_copies");
-        
-        Map<String, String> copyInserted = new HashMap<String, String>();
-        copyInserted.put("cid", String.valueOf(cid));
-        copyInserted.put("bid", bidInsert);
-        copyInserted.put("status", "1");
-        List<Map<String, String>> copyresult = new ArrayList<>();
-        copyresult.add(copyInserted);
-        Boolean copyInsertflag =dbConnctor.insert("books_copies",copyresult);
-        if(!copyInsertflag){
-            return false;
-        }
-        return true;
+    
+        // Step 3: Add a new book copy
+        int newCid = dbConnector.getNextId("book_copies");
+        Map<String, String> newCopy = new HashMap<>();
+        newCopy.put("cid", String.valueOf(newCid));
+        newCopy.put("bid", bid);
+        newCopy.put("status", "1");  // Assuming status '1' means 'available'
+        List<Map<String, String>> copiesToAdd = new ArrayList<>();
+        copiesToAdd.add(newCopy);
+        boolean copyAdded = dbConnector.insert("book_copies", copiesToAdd);
+        return copyAdded;
     }
-
     
 
-
-    public boolean removeBook(int cid){
-        dbSingleton dbConnctor = dbSingleton.getInstance();
-        List<Map<String, String>> bookCopies = dbConnctor.preciseSearch("book_copies", "cid", String.valueOf(cid));
-        if(bookCopies.size()==0){return false;}
-        String status=bookCopies.get(0).get("status");
-        if(status.equals("0")){return false;}
-        String bid=bookCopies.get(0).get("bid");
-
-
-        int deleteCopynumber=dbConnctor.delete("book_copies","cid",String.valueOf(cid));
-        if(deleteCopynumber<=0){
+    public boolean removeBook(int cid) {
+        dbSingleton dbConnector = dbSingleton.getInstance();
+        
+        // Step 1: Find the book copy to get the 'bid' and check 'status'
+        List<Map<String, String>> bookCopies = dbConnector.preciseSearch("book_copies", "cid", String.valueOf(cid));
+        if (bookCopies.isEmpty()) {
+            System.out.println("No book copy found with cid: " + cid);
             return false;
         }
-
-        List<Map<String,String>> copyRecords= dbConnctor.preciseSearch("book_copies", "bid", bid);
-        if(copyRecords.size()==0){
-            int deleteBooknumber=dbConnctor.delete("books", "bid", bid);
-            if(deleteBooknumber<=0){
+    
+        String bid = bookCopies.get(0).get("bid");
+        String status = bookCopies.get(0).get("status");
+        
+        // Only proceed if status is not '0'
+        if ("0".equals(status)) {
+            System.out.println("Cannot delete book copy with cid: " + cid + " because it is inactive.");
+            return false;
+        }
+    
+        // Step 2: Delete the book copy
+        int copiesDeleted = dbConnector.delete("book_copies", "cid", String.valueOf(cid));
+        if (copiesDeleted == 0) {
+            System.out.println("Failed to delete the book copy.");
+            return false;
+        }
+    
+        // Step 3: Retrieve the book record to update quantity
+        List<Map<String, String>> bookRecords = dbConnector.preciseSearch("books", "bid", bid);
+        if (bookRecords.isEmpty()) {
+            System.out.println("No book record found with bid: " + bid);
+            return false;
+        }
+        Map<String, String> bookRecord = bookRecords.get(0);
+        int currentQuantity = Integer.parseInt(bookRecord.get("quantity_available"));
+        if (currentQuantity > 0) {
+            bookRecord.put("quantity_available", String.valueOf(currentQuantity - 1));
+            List<Map<String, String>> updatedRecords = new ArrayList<>();
+            updatedRecords.add(bookRecord);
+            dbConnector.update("books", "bid", bid, updatedRecords);
+        }
+    
+        // Step 4: Check if there are more active copies with the same 'bid'
+        List<Map<String, String>> remainingCopies = dbConnector.preciseSearch("book_copies", "bid", bid);
+        boolean anyActiveCopies = remainingCopies.stream()
+            .anyMatch(copy -> !"0".equals(copy.get("status"))); // Check for any active copies
+    
+        if (!anyActiveCopies && currentQuantity == 1) { // If no more active copies and it was the last one
+            int booksDeleted = dbConnector.delete("books", "bid", bid);
+            if (booksDeleted == 0) {
+                System.out.println("Failed to delete the book record.");
                 return false;
             }
         }
+    
         return true;
     }
+    
+    
+    
 
     public List<user> viewAllUsers(){
         dbSingleton dbConnctor = dbSingleton.getInstance();

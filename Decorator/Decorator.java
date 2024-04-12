@@ -11,4 +11,5 @@ public abstract class Decorator implements FineCalculator {
     public double calculateFine(int daysOverdue) {
         return decoratedFine.calculateFine(daysOverdue);
     }
+    
 }
