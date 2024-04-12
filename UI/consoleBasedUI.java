@@ -47,6 +47,55 @@ public class consoleBasedUI {
         home();
     }
 
+    public void managerInterface(managerUser user){
+        System.out.println();
+        System.out.println("---Manager System---");
+        System.out.println("1.List All Books");
+        System.out.println("2.List All Copies for A Book");
+        System.out.println("3.Search Book");
+        System.out.println("4.Add Book");
+        System.out.println("5.Remove Book");
+        System.out.println("6.List All Users");
+        System.out.println("7.Back to Home (logout)");
+        System.out.println("8.Exit");
+
+        System.out.print("Choose an option(please enter a number): ");
+        int option = getIntInput();
+        switch (option) {
+            case 1:
+                displayAllBooks(user);
+                break;
+            case 2:
+                System.out.println("Enter the Book ID:");
+                int bid = getIntInput();  
+                displayBookCopies(user, bid);
+                break;
+            case 3:
+                searchAndDisplayBooks(user); 
+                break;
+            case 4:
+                addNewBook(user); 
+                break;
+            case 5:
+                removeBookCopy(user);  
+                break;
+            case 6:
+                displayAllUsers(user);  
+                break;
+            case 7:
+                home();
+                break;  
+            case 8:
+                dbSingleton.saveCacheData("./Database/Cache/last_id_map.cache");
+                System.exit(0);
+                break;                               
+            default:
+                System.out.println("Invalid option, re-enter number between 1 to 8");
+                break;
+        }
+        managerInterface(user);
+    }
+
     public void normalUserInterface(normalUser user){
         System.out.println();
         System.out.println("---!Welcome to the Library!---");
@@ -95,6 +144,28 @@ public class consoleBasedUI {
         normalUserInterface(user);
     }
 
+    public static int getIntInput() {        
+        Scanner keyboard = new Scanner(System.in);
+        String input = keyboard.nextLine();
+
+        int intInput;
+        try {
+            intInput = Integer.parseInt(input);
+        } 
+        catch (NumberFormatException e) {
+            System.out.print("Please enter a number, re-enter your option: ");
+            intInput = getIntInput();
+        }
+        return intInput;
+    }
+
+    public static String getStringInput() {        
+        Scanner keyboard = new Scanner(System.in);
+        String input = keyboard.nextLine();
+        return input;
+    }
+
+    
     private void displayAllBooks(managerUser user) {
         List<book> books = user.viewAllBooks();  
         if (books.size() == 0) {
@@ -129,7 +200,6 @@ public class consoleBasedUI {
         System.out.println();
     }
     
-
     private void searchAndDisplayBooks(managerUser user) {
         System.out.println("Search fields:");
         List<String> validInputs = Arrays.asList("title", "author", "genre");
@@ -241,83 +311,6 @@ public class consoleBasedUI {
         }
     }
     
-    
-    
-
-    public void managerInterface(managerUser user){
-        System.out.println();
-        System.out.println("---Manager System---");
-        System.out.println("1.List All Books");
-        System.out.println("2.List All Copies for A Book");
-        System.out.println("3.Search Book");
-        System.out.println("4.Add Book");
-        System.out.println("5.Remove Book");
-        System.out.println("6.List All Users");
-        System.out.println("7.Back to Home (logout)");
-        System.out.println("8.Exit");
-
-        System.out.print("Choose an option(please enter a number): ");
-        int option = getIntInput();
-        switch (option) {
-            case 1:
-                displayAllBooks(user);
-                break;
-
-            case 2:
-                System.out.println("Enter the Book ID:");
-                int bid = getIntInput();  
-                displayBookCopies(user, bid);
-                break;
-            case 3:
-                searchAndDisplayBooks(user); 
-                break;
-
-            case 4:
-                addNewBook(user); 
-                break;
-                
-            case 5:
-                removeBookCopy(user);  
-                break;
-                
-            case 6:
-                displayAllUsers(user);  // Call the new method to handle displaying all users
-                break;
-
-            case 7:
-                home();
-                break;  
-            case 8:
-                dbSingleton.saveCacheData("./Database/Cache/last_id_map.cache");
-                System.exit(0);
-                break;                               
-            default:
-                System.out.println("Invalid option, re-enter number between 1 to 8");
-                break;
-        }
-        managerInterface(user);
-    }
-
-    public static int getIntInput() {        
-        Scanner keyboard = new Scanner(System.in);
-        String input = keyboard.nextLine();
-
-        int intInput;
-        try {
-            intInput = Integer.parseInt(input);
-        } 
-        catch (NumberFormatException e) {
-            System.out.print("Please enter a number, re-enter your option: ");
-            intInput = getIntInput();
-        }
-        return intInput;
-    }
-
-    public static String getStringInput() {        
-        Scanner keyboard = new Scanner(System.in);
-        String input = keyboard.nextLine();
-        return input;
-    }
 
     private void login(){
         System.out.println();
