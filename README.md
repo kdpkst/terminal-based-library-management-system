@@ -26,7 +26,8 @@ table 1: **users**
 table 2: **books**
 | bid | title | author | genre | quantity_available |
 |:---:|:-----:|:------:|:-----:|:------------------:|
-> primary key: bid; (title, author) should be unique
+> primary key: bid  
+> (title, author) should be unique
 
 table 3: **book_copies** 
 | cid | bid | status |
